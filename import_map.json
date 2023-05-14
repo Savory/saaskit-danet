@@ -17,6 +17,11 @@
     "@supabase/auth-helpers-shared": "https://esm.sh/@supabase/auth-helpers-shared@0.3.4?target=es2022",
     "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.21.0",
     "feed": "https://esm.sh/feed@4.2.2",
-    "cookie": "https://esm.sh/v120/@types/cookie@0.5.1/index.d.ts"
+    "cookie": "https://esm.sh/v120/@types/cookie@0.5.1/index.d.ts",
+    "danet/": "https://deno.land/x/danet@1.7.1/",
+    "dotenv/": "https://deno.land/x/dotenv/",
+    "mongo/": "https://deno.land/x/mongo@v0.31.1/",
+    "postgres/": "https://deno.land/x/postgres@v0.17.0/",
+    "danet_swagger/": "https://deno.land/x/danet_swagger@1.6.1/"
   }
 }
