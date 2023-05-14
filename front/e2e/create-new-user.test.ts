@@ -25,7 +25,7 @@ Deno.test("Create new user", async (t) => {
       { state: { supabaseClient } } as any,
     );
     const users = await getAllUsers();
-    assert(res.status === 201, "Did not return 201");
+    assert(res.status === 301, "Did not return 301");
     assert(users.length === 1, "User not created in DB");
   });
   await deleteAllUsers();

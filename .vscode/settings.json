@@ -2,5 +2,12 @@
   "deno.enable": true,
   "deno.lint": true,
   "editor.formatOnSave": true,
+  "deno.unstable": true,
   "editor.defaultFormatter": "denoland.vscode-deno",
+  "deno.importMap": "./import_map.json",
+  "deno.suggest.imports.autoDiscover": true,
+  "deno.codeLens.implementations": true,
+  "deno.codeLens.references": true,
+  "deno.codeLens.test": true,
+  "deno.codeLens.referencesAllFunctions": true
 }

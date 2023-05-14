@@ -19,7 +19,7 @@ Deno.test("Create new post", async (t) => {
       { state: { session: { user: { id: "myUserId" } } } } as any,
     );
     const itemsInDb = await getAllItems();
-    assert(res.status === 201, "Did not return 201");
+    assert(res.status === 301, "Did not return 301");
     assert(itemsInDb.length === 1, "Item not created in DB");
   });
   await deleteAllItems();
