@@ -14,6 +14,10 @@ import {
 import { DanetApplication } from "danet/mod.ts";
 import { ItemService } from "../src/item/service.ts";
 import { Item } from "../src/item/class.ts";
+import { Comment } from "../src/item/comment/class.ts";
+import { InMemoryCommentRepository } from "../src/item/comment/in-memory-repository.ts";
+import { Repository } from "../src/database/repository.ts";
+import { COMMENT_REPOSITORY } from "../src/item/comment/constant.ts";
 
 let app: DanetApplication;
 let server;
@@ -96,4 +100,39 @@ describe("Item", () => {
         .json();
     assertEquals(post._id, createdPost._id);
   });
+
+  it("add comment to item", async () => {
+    const createdPost = await createPostAndComment();
+    const commentRepository = app.get<Repository<Comment>>(COMMENT_REPOSITORY);
+    const comments: Comment[] = await commentRepository.getAll();
+    assertEquals(comments.length, 1);
+    assertEquals(comments[0].itemId, createdPost._id);
+  });
+
+  it("get item comments", async () => {
+    const createdPost = await createPostAndComment();
+    const comments = await (await fetch(
+      `http://localhost:${port}/item/${createdPost._id}/comments`,
+    ))
+      .json();
+    assertEquals(comments.length, 1);
+    assertEquals(comments[0].itemId, createdPost._id);
+  });
 });
+
+async function createPostAndComment() {
+  const createdPost = await (await fetch(`http://localhost:${port}/item`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  })).json();
+  const createdComment = await (await fetch(
+    `http://localhost:${port}/item/${createdPost._id}/add-comment`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        text: "hellow !",
+      }),
+    },
+  )).json();
+  return createdPost;
+}

@@ -10,33 +10,16 @@ interface InitItem {
 }
 
 export interface Item extends InitItem {
-  id: string;
+  _id: string;
   createdAt: Date;
   score: number;
 }
 
 export async function createItem(initItem: InitItem) {
-  let res = { ok: false };
-  while (!res.ok) {
-    const id = crypto.randomUUID();
-    const itemKey = ["items", id];
-    const itemsByUserKey = ["items_by_user", initItem.userId, id];
-    const item: Item = {
-      ...initItem,
-      id,
-      score: 0,
-      createdAt: new Date(),
-    };
-
-    res = await kv.atomic()
-      .check({ key: itemKey, versionstamp: null })
-      .check({ key: itemsByUserKey, versionstamp: null })
-      .set(itemKey, item)
-      .set(itemsByUserKey, item)
-      .commit();
-
-    return item;
-  }
+  return (await fetch(`${Deno.env.get("API_URL")}/item`, {
+    method: "POST",
+    body: JSON.stringify(initItem),
+  })).json();
 }
 
 export async function getAllItems(options?: Deno.KvListOptions) {
@@ -52,8 +35,7 @@ export async function deleteAllItems() {
 }
 
 export async function getItemById(id: string) {
-  const res = await kv.get<Item>(["items", id]);
-  return res.value;
+  return (await fetch(`${Deno.env.get("API_URL")}/item/${id}`)).json();
 }
 
 export async function getItemByUser(userId: string, itemId: string) {
@@ -73,34 +55,24 @@ export interface Comment extends InitComment {
 }
 
 export async function createComment(initComment: InitComment) {
-  let res = { ok: false };
-  while (!res.ok) {
-    const id = crypto.randomUUID();
-    const commentsByUserKey = ["comments_by_users", initComment.userId, id];
-    const commentsByItemKey = ["comments_by_item", initComment.itemId, id];
-    const comment: Comment = { ...initComment, id, createdAt: new Date() };
-
-    res = await kv.atomic()
-      .check({ key: commentsByUserKey, versionstamp: null })
-      .check({ key: commentsByItemKey, versionstamp: null })
-      .set(commentsByUserKey, comment)
-      .set(commentsByItemKey, comment)
-      .commit();
-
-    return comment;
-  }
+  return (await fetch(
+    `${Deno.env.get("API_URL")}/item/${initComment.itemId}/add-comment`,
+    {
+      method: "POST",
+      body: JSON.stringify(initComment),
+    },
+  )).json();
 }
 
 export async function getCommentsByItem(
   itemId: string,
-  options?: Deno.KvListOptions,
 ) {
-  const iter = await kv.list<Comment>({
-    prefix: ["comments_by_item", itemId],
-  }, options);
-  const comments = [];
-  for await (const res of iter) comments.push(res.value);
-  return comments;
+  return (await fetch(
+    `${Deno.env.get("API_URL")}/item/${itemId}/comments`,
+    {
+      method: "GET",
+    },
+  )).json();
 }
 
 interface InitVote {
@@ -121,7 +93,7 @@ export async function createVote(initVote: InitVote) {
     const itemByUserKey = [
       "items_by_user",
       itemRes.value.userId,
-      itemRes.value.id,
+      itemRes.value._id,
     ];
 
     const itemByUserRes = await kv.get<Item>(itemByUserKey);
@@ -158,7 +130,7 @@ export async function deleteVote(initVote: InitVote) {
     const itemByUserKey = [
       "items_by_user",
       itemRes.value.userId,
-      itemRes.value.id,
+      itemRes.value._id,
     ];
 
     const itemByUserRes = await kv.get<Item>(itemByUserKey);
@@ -277,8 +249,8 @@ export async function getOrCreateUser(id: string, email: string) {
   });
 }
 
-export function getUserDisplayName(user: User) {
-  return user.displayName || user.id;
+export function getUserDisplayName(user?: User) {
+  return user?.displayName || user?.id || "unknown user";
 }
 
 export async function setUserDisplayName(

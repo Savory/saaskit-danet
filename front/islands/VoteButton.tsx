@@ -13,7 +13,7 @@ export default function VoteButton(props: VoteButtonProps) {
   const score = useSignal(props.item.score);
 
   async function onClick() {
-    const url = `/api/vote?item_id=${props.item.id}`;
+    const url = `/api/vote?item_id=${props.item._id}`;
     const method = isVoted.value ? "DELETE" : "POST";
     const response = await fetch(url, { method, credentials: "same-origin" });
 

@@ -13,11 +13,16 @@ export class Item {
   createdAt: Date;
   score: number;
 
-  constructor(title: string, url: string, userId: string) {
+  constructor(
+    title: string,
+    url: string,
+    userId: string,
+    createdAt: Date = new Date(),
+  ) {
     this.title = title;
     this.url = url;
     this.userId = userId;
-    this.createdAt = new Date();
+    this.createdAt = createdAt;
     this.score = 0;
   }
 }

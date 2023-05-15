@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from "danet/mod.ts";
 import { Item } from "./class.ts";
+import { Comment, CreateCommentDTO } from "./comment/class.ts";
 import { ItemService } from "./service.ts";
 import { ReturnedType } from "danet_swagger/decorators.ts";
 
@@ -22,6 +23,7 @@ export class ItemController {
 
   @Post()
   async createItem(@Body() item: Item) {
+    item.userId = "toto";
     return this.itemService.create(item);
   }
 
@@ -33,5 +35,19 @@ export class ItemController {
   @Delete(":id")
   async deleteItemById(@Param("id") itemId: string) {
     return this.itemService.deleteOneById(itemId);
+  }
+
+  @Post(":id/add-comment")
+  async addComment(
+    @Param("id") itemId: string,
+    @Body() comment: CreateCommentDTO,
+  ) {
+    comment.userId = "toto";
+    return this.itemService.addComment(itemId, comment);
+  }
+
+  @Get(":id/comments")
+  async getComments(@Param("id") itemId: string) {
+    return this.itemService.getComments(itemId);
   }
 }

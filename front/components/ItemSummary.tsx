@@ -29,7 +29,10 @@ export default function ItemSummary(props: ItemSummaryProps) {
       />
       <div>
         <span class="mr-2">
-          <a class="text-black hover:underline" href={`/item/${props.item.id}`}>
+          <a
+            class="text-black hover:underline"
+            href={`/item/${props.item._id}`}
+          >
             {props.item.title}
           </a>
         </span>
@@ -40,7 +43,7 @@ export default function ItemSummary(props: ItemSummaryProps) {
         </span>
         <p>
           {getUserDisplayName(props.user)}{" "}
-          {props.user.isSubscribed && (
+          {props.user?.isSubscribed && (
             <span title="Deno Hunt premium user">🦕{" "}</span>
           )}
           {timeAgo(new Date(props.item.createdAt))} ago

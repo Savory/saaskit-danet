@@ -1,12 +1,15 @@
-import { Inject, Injectable } from "danet/mod.ts";
+import { BadRequestException, Inject, Injectable } from "danet/mod.ts";
 import { Item } from "./class.ts";
+import { Comment } from "./comment/class.ts";
 import type { Repository } from "../database/repository.ts";
 import { ITEM_REPOSITORY } from "./constant.ts";
+import { CommentService } from "./comment/service.ts";
 
 @Injectable()
 export class ItemService {
   constructor(
     @Inject(ITEM_REPOSITORY) private repository: Repository<Item>,
+    private commentService: CommentService,
   ) {
   }
 
@@ -19,9 +22,9 @@ export class ItemService {
   }
 
   async create(item: Omit<Item, "_id">) {
-    item.userId = 'toto';
-    item.score = 0;
-    return this.repository.create(item);
+    return this.repository.create(
+      new Item(item.title, item.url, item.userId, new Date()),
+    );
   }
 
   update(itemId: string, item: Item) {
@@ -34,5 +37,18 @@ export class ItemService {
 
   deleteAll() {
     return this.repository.deleteAll();
+  }
+
+  async addComment(
+    itemId: string,
+    comment: Omit<Comment, "_id" | "createdAt">,
+  ) {
+    const item = await this.repository.getById(itemId);
+    if (!item) throw new BadRequestException();
+    return this.commentService.create({ ...comment, itemId: itemId });
+  }
+
+  async getComments(itemId: string) {
+    return this.commentService.getItemComments(itemId);
   }
 }

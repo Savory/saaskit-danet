@@ -40,7 +40,7 @@ export const handler: Handlers<HomePageData, State> = {
       ? await getVotedItemIdsByUser(ctx.state.session?.user.id)
       : [];
     /** @todo Optimise */
-    const areVoted = items.map((item) => votedItemIds.includes(item.id));
+    const areVoted = items.map((item) => votedItemIds.includes(item._id));
     return ctx.render({ ...ctx.state, items, users, areVoted });
   },
 };

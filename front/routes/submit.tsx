@@ -42,7 +42,7 @@ export const handler: Handlers<State, State> = {
       url,
     });
 
-    return redirect(`/item/${item!.id}`);
+    return redirect(`/item/${item!._id}`);
   },
 };
 
