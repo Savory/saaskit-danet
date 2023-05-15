@@ -1,12 +1,12 @@
-import { Controller, Get } from 'danet/mod.ts';
+import { Controller, Get } from "danet/mod.ts";
 
-@Controller('')
+@Controller("")
 export class AppController {
   constructor() {
   }
 
   @Get()
   helloWorld() {
-    return 'Hello World';
+    return "Hello World";
   }
 }

@@ -1,10 +1,16 @@
+import { ApiProperty } from "https://deno.land/x/danet_swagger@1.6.1/decorators.ts";
 import { IsString } from "https://deno.land/x/validatte@0.7.1/mod.ts";
 
 export class Comment {
-  readonly _id = crypto.randomUUID();
+  @ApiProperty()
+  readonly _id: string = crypto.randomUUID();
+  @ApiProperty()
   createdAt: Date;
+  @ApiProperty()
   userId: string;
+  @ApiProperty()
   itemId: string;
+  @ApiProperty()
   text: string;
 
   constructor(

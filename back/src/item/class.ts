@@ -1,6 +1,8 @@
 import { IsString, IsUrl } from "danet/validation.ts";
+import { ApiProperty } from "https://deno.land/x/danet_swagger@1.6.1/decorators.ts";
 
 export class Item {
+  @ApiProperty()
   readonly _id = crypto.randomUUID();
   @IsString()
   public title: string;
@@ -9,8 +11,11 @@ export class Item {
   @IsUrl()
   url: string;
 
+  @ApiProperty()
   userId: string;
+  @ApiProperty()
   createdAt: Date;
+  @ApiProperty()
   score: number;
 
   constructor(
