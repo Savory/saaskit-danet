@@ -44,7 +44,7 @@ describe("Item", () => {
     await app.close();
   });
 
-  it("simple item creation", async () => {
+  it("create item", async () => {
     const res = await fetch(`http://localhost:${port}/item`, {
       method: "POST",
       body: JSON.stringify(payload),
@@ -54,5 +54,46 @@ describe("Item", () => {
     assertEquals(returnedData.score, 0);
     assertEquals(returnedData.title, payload.title);
     assertEquals(returnedData.url, payload.url);
+  });
+
+  it("fails to create item if url is not valid", async () => {
+    const res = await fetch(`http://localhost:${port}/item`, {
+      method: "POST",
+      body: JSON.stringify({
+        ...payload,
+        url: "badurl",
+      }),
+    });
+    await res.body?.cancel();
+    assertEquals(res.status, 400);
+  });
+
+  it("get items", async () => {
+    (await fetch(`http://localhost:${port}/item`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    })).body?.cancel();
+    (await fetch(`http://localhost:${port}/item`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    })).body?.cancel();
+    (await fetch(`http://localhost:${port}/item`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    })).body?.cancel();
+    const res = await fetch(`http://localhost:${port}/item`);
+    const items = await res.json();
+    assertEquals(items.length, 3);
+  });
+
+  it("get items by id", async () => {
+    const createdPost = await (await fetch(`http://localhost:${port}/item`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    })).json();
+    const post =
+      await (await fetch(`http://localhost:${port}/item/${createdPost._id}`))
+        .json();
+    assertEquals(post._id, createdPost._id);
   });
 });
