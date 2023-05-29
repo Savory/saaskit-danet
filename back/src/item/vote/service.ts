@@ -2,18 +2,18 @@ import { Inject, Injectable } from "danet/mod.ts";
 import { Vote } from "./class.ts";
 import { VOTE_REPOSITORY } from "./constant.ts";
 import type { CommentRepository } from "./repository.ts";
-import type { AuthService } from "../../auth/service.ts";
-import { AUTH_SERVICE } from "../../auth/module.ts";
+import type { ActualUserService } from "../../auth/actual-user.service.ts";
+import { ACTUAL_USER_SERVICE } from "../../auth/module.ts";
 
 @Injectable()
 export class VoteService {
   constructor(
     @Inject(VOTE_REPOSITORY) private repository: CommentRepository,
-    @Inject(AUTH_SERVICE) private authService: AuthService,
+    @Inject(ACTUAL_USER_SERVICE) private actualUserService: ActualUserService,
   ) {}
 
   async upvote(itemId: string) {
-    const user = await this.authService.getActualUser();
+    const user = await this.actualUserService.get();
     const userVoteOnitem = await this.repository.getByItemIdAndUserId(
       itemId,
       user.id,
@@ -31,7 +31,7 @@ export class VoteService {
   }
 
   async userHasVotedOnItem(itemId: string) {
-    const user = await this.authService.getActualUser();
+    const user = await this.actualUserService.get();
     const userVoteOnitem = await this.repository.getByItemIdAndUserId(
       itemId,
       user.id,
@@ -40,7 +40,7 @@ export class VoteService {
   }
 
   async removeUpvote(itemId: string) {
-    const user = await this.authService.getActualUser();
+    const user = await this.actualUserService.get();
     const userVoteOnitem = await this.repository.getByItemIdAndUserId(
       itemId,
       user.id,

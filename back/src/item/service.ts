@@ -6,14 +6,14 @@ import { ITEM_REPOSITORY } from "./constant.ts";
 import { CommentService } from "./comment/service.ts";
 import { VoteService } from "./vote/service.ts";
 import { Vote } from "./vote/class.ts";
-import type { AuthService } from "../auth/service.ts";
-import { AUTH_SERVICE } from "../auth/module.ts";
+import type { ActualUserService } from "../auth/actual-user.service.ts";
+import { ACTUAL_USER_SERVICE } from "../auth/module.ts";
 
 @Injectable()
 export class ItemService {
   constructor(
     @Inject(ITEM_REPOSITORY) private repository: Repository<Item>,
-    @Inject(AUTH_SERVICE) private authService: AuthService,
+    @Inject(ACTUAL_USER_SERVICE) private authService: ActualUserService,
     private commentService: CommentService,
     private voteService: VoteService,
   ) {
@@ -37,7 +37,7 @@ export class ItemService {
   }
 
   async create(item: CreateItemDTO) {
-    const user = await this.authService.getActualUser();
+    const user = await this.authService.get();
     return this.repository.create(
       new Item(item.title, item.url, user.id, new Date()),
     );

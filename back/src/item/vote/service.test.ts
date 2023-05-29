@@ -4,20 +4,20 @@ import {
   beforeAll,
   describe,
   it,
-} from "https://deno.land/std@0.140.0/testing/bdd.ts";
+} from "std/testing/bdd.ts";
 import { VoteService } from "./service.ts";
 import { InMemoryVoteRepository } from "./in-memory.repository.ts";
 import {
   assertEquals,
   assertRejects,
   assertThrows,
-} from "https://deno.land/std@0.152.0/testing/asserts.ts";
+} from "std/testing/asserts.ts";
 
 const userId = "hardcodeduser";
 describe("vote service", () => {
   const inMemoryVoteRepository = new InMemoryVoteRepository();
   const voteService = new VoteService(inMemoryVoteRepository, {
-    getActualUser: async () => ({ id: userId }),
+    get: async () => ({ id: userId }),
   });
 
   afterEach(async () => {
