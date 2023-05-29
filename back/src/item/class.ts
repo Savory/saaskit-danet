@@ -5,6 +5,7 @@ export class Item {
   @ApiProperty()
   readonly _id = crypto.randomUUID();
 
+  @ApiProperty()
   public title: string;
 
   @IsString()
@@ -17,6 +18,8 @@ export class Item {
   createdAt: Date;
   @ApiProperty()
   score: number;
+  @ApiProperty()
+  userHasVoted?: boolean;
 
   constructor(
     title: string,
