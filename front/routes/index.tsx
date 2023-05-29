@@ -16,7 +16,6 @@ import {
 interface HomePageData extends State {
   users: User[];
   items: Item[];
-  areVoted: boolean[];
 }
 
 export function compareScore(a: Item, b: Item) {
@@ -34,14 +33,9 @@ export function compareScore(a: Item, b: Item) {
 export const handler: Handlers<HomePageData, State> = {
   async GET(_req, ctx) {
     /** @todo Add pagination functionality */
-    const items = (await getAllItems({ limit: 10 })).sort(compareScore);
+    const items = await getAllItems();
     const users = await getUsersByIds(items.map((item) => item.userId));
-    const votedItemIds = ctx.state.session
-      ? await getVotedItemIdsByUser(ctx.state.session?.user.id)
-      : [];
-    /** @todo Optimise */
-    const areVoted = items.map((item) => votedItemIds.includes(item._id));
-    return ctx.render({ ...ctx.state, items, users, areVoted });
+    return ctx.render({ ...ctx.state, items, users });
   },
 };
 
@@ -54,7 +48,7 @@ export default function HomePage(props: PageProps<HomePageData>) {
           {props.data.items.map((item, index) => (
             <ItemSummary
               item={item}
-              isVoted={props.data.areVoted[index]}
+              isVoted={item.userHasVoted}
               user={props.data.users[index]}
             />
           ))}

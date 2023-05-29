@@ -1,4 +1,4 @@
-import { InMemoryRepository } from "../../database/in-memory-repository.ts";
+import { InMemoryRepository } from "../../database/in-memory.repository.ts";
 import { Comment } from "./class.ts";
 import { CommentRepository } from "./repository.ts";
 

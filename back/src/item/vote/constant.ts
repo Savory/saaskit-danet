@@ -1,0 +1,1 @@
+export const VOTE_REPOSITORY = "VOTE_REPOSITORY";

@@ -40,3 +40,17 @@ add new tasks to your deno.json to encapsulate back task
 "back:launch-server": "cd back && deno task launch-server",
 "back:test": "cd back && deno task test",
 ```
+
+I started with item, creating a basic crud controller, service and in memory
+setup.
+
+Then I rewrote front/utils/db.ts relevant function to call the api
+
+```
+export async function getAllItems() {
+  return (await fetch(`${Deno.env.get("API_URL")}/item`)).json();
+}
+```
+
+The db.ts file will probably be renamed api.ts later on when all feature have
+been migrated to the back.

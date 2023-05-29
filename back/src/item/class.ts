@@ -4,7 +4,7 @@ import { ApiProperty } from "https://deno.land/x/danet_swagger@1.6.1/decorators.
 export class Item {
   @ApiProperty()
   readonly _id = crypto.randomUUID();
-  @IsString()
+
   public title: string;
 
   @IsString()
@@ -30,4 +30,19 @@ export class Item {
     this.createdAt = createdAt;
     this.score = 0;
   }
+}
+
+export class CreateItemDTO implements Pick<Item, "title" | "url"> {
+  @IsString()
+  public title!: string;
+
+  @IsUrl()
+  url!: string;
+}
+
+export class UpvoteCount {
+  @ApiProperty()
+  count!: number;
+  @ApiProperty()
+  userHasVoted!: boolean;
 }

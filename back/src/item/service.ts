@@ -1,29 +1,45 @@
 import { BadRequestException, Inject, Injectable } from "danet/mod.ts";
-import { Item } from "./class.ts";
+import { CreateItemDTO, Item } from "./class.ts";
 import { Comment } from "./comment/class.ts";
 import type { Repository } from "../database/repository.ts";
 import { ITEM_REPOSITORY } from "./constant.ts";
 import { CommentService } from "./comment/service.ts";
+import { VoteService } from "./vote/service.ts";
+import { Vote } from "./vote/class.ts";
+import type { AuthService } from "../auth/service.ts";
+import { AUTH_SERVICE } from "../auth/module.ts";
 
 @Injectable()
 export class ItemService {
   constructor(
     @Inject(ITEM_REPOSITORY) private repository: Repository<Item>,
+    @Inject(AUTH_SERVICE) private authService: AuthService,
     private commentService: CommentService,
+    private voteService: VoteService,
   ) {
   }
 
-  getAll() {
-    return this.repository.getAll();
+  async getAll() {
+    const items = await this.repository.getAll();
+    const promises = items.map(async (item: Item) => {
+      const voteData = await this.getUpvoteCount(item._id);
+      return {
+        ...item,
+        userHasVoted: voteData.userHasVoted,
+        score: voteData.count,
+      };
+    });
+    return Promise.all(promises);
   }
 
   getById(id: string) {
     return this.repository.getById(id);
   }
 
-  async create(item: Omit<Item, "_id">) {
+  async create(item: CreateItemDTO) {
+    const user = await this.authService.getActualUser();
     return this.repository.create(
-      new Item(item.title, item.url, item.userId, new Date()),
+      new Item(item.title, item.url, user.id, new Date()),
     );
   }
 
@@ -50,5 +66,21 @@ export class ItemService {
 
   async getComments(itemId: string) {
     return this.commentService.getItemComments(itemId);
+  }
+
+  async upvote(itemId: string) {
+    return this.voteService.upvote(itemId);
+  }
+
+  async removeUpvote(itemId: string) {
+    return this.voteService.removeUpvote(itemId);
+  }
+
+  async getUpvoteCount(itemId: string) {
+    const [count, userHasVoted] = await Promise.all([
+      this.voteService.getItemVoteCount(itemId),
+      this.voteService.userHasVotedOnItem(itemId),
+    ]);
+    return { count, userHasVoted };
   }
 }

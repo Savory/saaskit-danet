@@ -15,6 +15,7 @@ import {
   createComment,
   getCommentsByItem,
   getItemById,
+  getItemUpvoteInfo,
   getUserById,
   getUserDisplayName,
   getUsersByIds,
@@ -48,18 +49,18 @@ export const handler: Handlers<ItemPageData, State> = {
     );
     const user = await getUserById(item.userId);
 
-    const votedItemIds = ctx.state.session
-      ? await getVotedItemIdsByUser(ctx.state.session?.user.id)
-      : [];
-    const isVoted = votedItemIds.includes(id);
+    const itemUpvotesInfo = await getItemUpvoteInfo(item._id);
 
     return ctx.render({
       ...ctx.state,
-      item,
+      item: {
+        ...item,
+        score: itemUpvotesInfo.count,
+      },
       comments,
       user: user!,
       commentsUsers,
-      isVoted,
+      isVoted: itemUpvotesInfo.userHasVoted,
     });
   },
   async POST(req, ctx) {

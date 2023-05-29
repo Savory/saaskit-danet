@@ -5,6 +5,7 @@
     "front:start": "cd front && deno task start",
     "front:test": "cd front && deno task test",
     "back:test": "cd back && deno task test",
+    "back:test:e2e": "cd back && deno task test:e2e",
     "front:test:e2e": "cd front && deno task test:e2e",
     "check:license": "deno run --allow-read --allow-write tools/check_license.ts",
     "ok": "deno fmt --check && deno lint && deno task check:license --check && deno check main.ts && deno task test"
