@@ -3,6 +3,12 @@ import { DanetApplication } from "danet/mod.ts";
 import { configAsync } from "dotenv/mod.ts";
 import { loggerMiddleware } from "./logger.middleware.ts";
 import { SpecBuilder, SwaggerModule } from "danet_swagger/mod.ts";
+import { Session } from "session/mod.ts";
+
+const app = new DanetApplication();
+app.addGlobalMiddlewares(
+  Session.initMiddleware(),
+);
 export const bootstrap = async () => {
   await configAsync({ export: true });
   const application = new DanetApplication();
@@ -14,6 +20,9 @@ export const bootstrap = async () => {
     .build();
   const document = await SwaggerModule.createDocument(application, spec);
   await SwaggerModule.setup("api", application, document);
-  application.addGlobalMiddlewares(loggerMiddleware);
+  app.addGlobalMiddlewares(
+    Session.initMiddleware(),
+    loggerMiddleware,
+  );
   return application;
 };

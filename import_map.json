@@ -23,6 +23,8 @@
     "mongo/": "https://deno.land/x/mongo@v0.31.1/",
     "postgres/": "https://deno.land/x/postgres@v0.17.0/",
     "danet_swagger/": "https://deno.land/x/danet_swagger@1.6.1/",
-    "validatte/": "https://deno.land/x/validatte@0.7.1/"
+    "validatte/": "https://deno.land/x/validatte@0.7.1/",
+    "oauth2_client/": "https://deno.land/x/oauth2_client@v1.0.0/",
+    "session/": "https://deno.land/x/oak_sessions@v4.0.5/"
   }
 }
