@@ -32,6 +32,7 @@ export class OAuth2Controller {
     const { uri, codeVerifier } = await this.oauth2Service
       .getAuthorizationUri(provider);
     session.flash("codeVerifier", codeVerifier);
+    session.flash("provider", provider);
     response.redirect(uri);
   }
 
@@ -39,9 +40,14 @@ export class OAuth2Controller {
   async callback(@Session() session: OakSession, @Req() request: Request) {
     // Make sure the codeVerifier is present for the user's session
     const codeVerifier = session.get("codeVerifier");
+    const provider: string = session.get("provider") as string;
     if (typeof codeVerifier !== "string") {
       throw new Error("invalid codeVerifier");
     }
-    return this.oauth2Service.registerOrLoginUser(request.url, codeVerifier);
+    return this.oauth2Service.registerOrLoginUser(
+      request.url,
+      codeVerifier,
+      provider,
+    );
   }
 }

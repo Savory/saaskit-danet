@@ -26,6 +26,22 @@ export class OAuth2Service {
         },
       }),
     );
+    this.clients.set(
+      "discord",
+      new OAuth2Client({
+        clientId: Deno.env.get("DISCORD_CLIENT_ID")!,
+        clientSecret: Deno.env.get("DISCORD_CLIENT_SECRET")!,
+        authorizationEndpointUri: "https://discord.com/oauth2/authorize",
+        tokenUri: "https://discord.com/api/oauth2/token",
+        redirectUri: "http://localhost:3000/oauth2/callback",
+        defaults: {
+          scope: [
+            "email",
+            "identify",
+          ],
+        },
+      }),
+    );
   }
 
   async registerOrLoginUser(
@@ -42,9 +58,12 @@ export class OAuth2Service {
       tokens.accessToken,
       provider,
     );
+    if (!externalUserData) {
+      throw new Error("Cannot get user info from provider" + provider);
+    }
     return this.authService.registerOrLoginOAuth2(
       externalUserData.email,
-      externalUserData.name,
+      externalUserData.username,
     );
   }
 
@@ -69,7 +88,20 @@ export class OAuth2Service {
           },
         },
       );
-      return userResponse.json();
+      const user = await userResponse.json();
+      return { email: user.email, username: user.name };
+    } else if (provider === "discord") {
+      const userResponse = await fetch(
+        "https://discord.com/api/users/@me",
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      const user = await userResponse.json();
+      return { email: user.email, username: user.username };
     }
+    return null;
   }
 }
