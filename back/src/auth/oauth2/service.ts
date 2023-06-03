@@ -1,6 +1,5 @@
 import { Injectable } from "danet/mod.ts";
 import { OAuth2Client } from "oauth2_client/mod.ts";
-import { UserService } from "../../user/service.ts";
 import { AuthService } from "../service.ts";
 
 @Injectable()
