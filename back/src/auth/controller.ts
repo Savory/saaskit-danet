@@ -1,26 +1,23 @@
 import { Controller, Get, Req, Res, Session } from "danet/mod.ts";
 import { Session as OakSession } from "session/mod.ts";
-import { OAuth2Client } from "oauth2_client/mod.ts";
+import { OAuth2Service } from "./oauth2/service.ts";
+import { UserService } from "../user/service.ts";
+import { Tag } from "danet_swagger/decorators.ts";
+import { AuthService } from "./service.ts";
 
+@Tag("oauth2")
 @Controller("oauth2")
 export class OAuth2Controller {
-  oauth2Client: OAuth2Client;
-  constructor() {
-    this.oauth2Client = new OAuth2Client({
-      clientId: Deno.env.get("CLIENT_ID")!,
-      clientSecret: Deno.env.get("CLIENT_SECRET")!,
-      authorizationEndpointUri: "https://github.com/login/oauth/authorize",
-      tokenUri: "https://github.com/login/oauth/access_token",
-      redirectUri: "http://localhost:3000/oauth2/callback",
-      defaults: {
-        scope: "read:user",
-      },
-    });
+  constructor(
+    private authService: AuthService,
+    private oauth2Service: OAuth2Service,
+    private userService: UserService,
+  ) {
   }
 
   @Get("login")
   async login(@Session() session: OakSession, @Res() response: any) {
-    const { uri, codeVerifier } = await this.oauth2Client.code
+    const { uri, codeVerifier } = await this.oauth2Service
       .getAuthorizationUri();
     session.flash("codeVerifier", codeVerifier);
     response.redirect(uri);
@@ -33,22 +30,20 @@ export class OAuth2Controller {
     if (typeof codeVerifier !== "string") {
       throw new Error("invalid codeVerifier");
     }
-
-    // Exchange the authorization code for an access token
-    const tokens = await this.oauth2Client.code.getToken(request.url, {
+    const tokens = await this.oauth2Service.getTokens(
+      request.url,
       codeVerifier,
+    );
+    const externalUserData = await this.oauth2Service.getUser(
+      tokens.accessToken,
+    );
+    const user = await this.userService.getOrCreateUser(
+      externalUserData.email,
+      externalUserData.name,
+    );
+    return this.authService.generateUserToken({
+      _id: user._id,
+      username: user.username,
     });
-
-    console.log(tokens);
-
-    // Use the access token to make an authenticated API request
-    const userResponse = await fetch("https://api.github.com/user", {
-      headers: {
-        Authorization: `Bearer ${tokens.accessToken}`,
-      },
-    });
-    const user = await userResponse.json();
-    console.log(user);
-    return user.login;
   }
 }
