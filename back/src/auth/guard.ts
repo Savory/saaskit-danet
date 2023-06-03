@@ -7,7 +7,11 @@ export class UserConnected implements AuthGuard {
   async canActivate(
     context: ExecutionContext,
   ): Promise<boolean> {
-    const token = context.request.headers.get("token");
+    const bearerToken = context.request.headers.get("authorization");
+    if (!bearerToken) {
+      return false;
+    }
+    const [_, token] = bearerToken.split(" ");
     if (!token) {
       return false;
     }

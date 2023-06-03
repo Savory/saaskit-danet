@@ -17,6 +17,7 @@ export const bootstrap = async () => {
     .setTitle("SAASKit")
     .setDescription("Danet SAASKit API")
     .setVersion("1.0")
+    .addBearerAuth()
     .build();
   const document = await SwaggerModule.createDocument(application, spec);
   await SwaggerModule.setup("api", application, document);
