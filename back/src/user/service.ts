@@ -13,4 +13,9 @@ export class UserService {
     }
     return this.repository.create(new User(email, username));
   }
+
+  async getMyInfo(userId: string) {
+    const user = await this.repository.getById(userId);
+    return user;
+  }
 }

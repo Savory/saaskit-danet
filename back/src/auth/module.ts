@@ -1,17 +1,17 @@
 import { Module } from "danet/mod.ts";
 import { TokenInjector } from "danet/mod.ts";
-import { HardCodedAuthService } from "./hardcoded-auth.service.ts";
-import { OAuth2Controller } from "./controller.ts";
+import { InMemoryActualUserService } from "./actual-user.memory.service.ts";
+import { OAuth2Controller } from "./oauth2/controller.ts";
 import { OAuth2Service } from "./oauth2/service.ts";
 import { AuthService } from "./service.ts";
-
-export const ACTUAL_USER_SERVICE = "ACTUAL_USER_SERVICE";
+import { AuthController } from "./controller.ts";
+import { ACTUAL_USER_SERVICE } from "./constant.ts";
 
 @Module({
-  controllers: [OAuth2Controller],
+  controllers: [AuthController, OAuth2Controller],
   injectables: [
     AuthService,
-    new TokenInjector(HardCodedAuthService, ACTUAL_USER_SERVICE),
+    new TokenInjector(InMemoryActualUserService, ACTUAL_USER_SERVICE),
     OAuth2Service,
   ],
 })

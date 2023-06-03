@@ -1,5 +1,5 @@
 import { IsString, IsUrl } from "danet/validation.ts";
-import { ApiProperty } from "https://deno.land/x/danet_swagger@1.6.1/decorators.ts";
+import { ApiProperty } from "danet_swagger/decorators.ts";
 
 export class Item {
   @ApiProperty()

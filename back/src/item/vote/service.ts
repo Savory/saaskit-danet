@@ -3,7 +3,7 @@ import { Vote } from "./class.ts";
 import { VOTE_REPOSITORY } from "./constant.ts";
 import type { CommentRepository } from "./repository.ts";
 import type { ActualUserService } from "../../auth/actual-user.service.ts";
-import { ACTUAL_USER_SERVICE } from "../../auth/module.ts";
+import { ACTUAL_USER_SERVICE } from "../../auth/constant.ts";
 
 @Injectable()
 export class VoteService {

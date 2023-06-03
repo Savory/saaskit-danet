@@ -1,3 +1,5 @@
+import { User } from "../user/class.ts";
+
 export interface ActualUserService {
-  get(): Promise<{ id: string }>;
+  get(): Promise<User>;
 }

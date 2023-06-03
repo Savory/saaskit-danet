@@ -7,7 +7,7 @@ import { CommentService } from "./comment/service.ts";
 import { VoteService } from "./vote/service.ts";
 import { Vote } from "./vote/class.ts";
 import type { ActualUserService } from "../auth/actual-user.service.ts";
-import { ACTUAL_USER_SERVICE } from "../auth/module.ts";
+import { ACTUAL_USER_SERVICE } from "../auth/constant.ts";
 
 @Injectable()
 export class ItemService {

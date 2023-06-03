@@ -1,0 +1,18 @@
+import { AuthGuard, ExecutionContext, Injectable } from "danet/mod.ts";
+import { AuthService } from "./service.ts";
+
+@Injectable()
+export class UserConnected implements AuthGuard {
+  constructor(private authService: AuthService) {}
+  async canActivate(
+    context: ExecutionContext,
+  ): Promise<boolean> {
+    const token = context.request.headers.get("token");
+    if (!token) {
+      return false;
+    }
+    const userData = await this.authService.verifyToken(token);
+    context.state.userId = userData._id;
+    return true;
+  }
+}
