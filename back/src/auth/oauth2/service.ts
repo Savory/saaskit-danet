@@ -5,33 +5,42 @@ import { AuthService } from "../service.ts";
 
 @Injectable()
 export class OAuth2Service {
-  private client: OAuth2Client;
+  private clients = new Map<String, OAuth2Client>();
 
   constructor(
     private authService: AuthService,
   ) {
-    this.client = new OAuth2Client({
-      clientId: Deno.env.get("CLIENT_ID")!,
-      clientSecret: Deno.env.get("CLIENT_SECRET")!,
-      authorizationEndpointUri: "https://accounts.google.com/o/oauth2/auth",
-      tokenUri: "https://accounts.google.com/o/oauth2/token",
-      redirectUri: "http://localhost:3000/oauth2/callback",
-      defaults: {
-        scope: [
-          "https://www.googleapis.com/auth/userinfo.email",
-          "https://www.googleapis.com/auth/userinfo.profile",
-        ],
-      },
-    });
+    this.clients.set(
+      "google",
+      new OAuth2Client({
+        clientId: Deno.env.get("GOOGLE_CLIENT_ID")!,
+        clientSecret: Deno.env.get("GOOGLE_CLIENT_SECRET")!,
+        authorizationEndpointUri: "https://accounts.google.com/o/oauth2/auth",
+        tokenUri: "https://accounts.google.com/o/oauth2/token",
+        redirectUri: "http://localhost:3000/oauth2/callback",
+        defaults: {
+          scope: [
+            "https://www.googleapis.com/auth/userinfo.email",
+            "https://www.googleapis.com/auth/userinfo.profile",
+          ],
+        },
+      }),
+    );
   }
 
-  async registerOrLoginUser(url: string, codeVerifier: string) {
+  async registerOrLoginUser(
+    url: string,
+    codeVerifier: string,
+    provider = "google",
+  ) {
     const tokens = await this.getTokens(
       url,
       codeVerifier,
+      provider,
     );
     const externalUserData = await this.getUser(
       tokens.accessToken,
+      provider,
     );
     return this.authService.registerOrLoginOAuth2(
       externalUserData.email,
@@ -39,26 +48,28 @@ export class OAuth2Service {
     );
   }
 
-  getAuthorizationUri() {
-    return this.client.code
+  getAuthorizationUri(provider: string) {
+    return this.clients.get(provider)!.code
       .getAuthorizationUri();
   }
 
-  getTokens(url: string, codeVerifier: string) {
-    return this.client.code.getToken(url, {
+  getTokens(url: string, codeVerifier: string, provider: string) {
+    return this.clients.get(provider)!.code.getToken(url, {
       codeVerifier,
     });
   }
 
-  async getUser(accessToken: string) {
-    const userResponse = await fetch(
-      "https://www.googleapis.com/oauth2/v3/userinfo",
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+  async getUser(accessToken: string, provider: string) {
+    if (provider === "google") {
+      const userResponse = await fetch(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      },
-    );
-    return userResponse.json();
+      );
+      return userResponse.json();
+    }
   }
 }

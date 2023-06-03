@@ -36,11 +36,6 @@ export async function getItemById(id: string) {
   return (await fetch(`${Deno.env.get("API_URL")}/item/${id}`)).json();
 }
 
-export async function getItemByUser(userId: string, itemId: string) {
-  const res = await kv.get<Item>(["items_by_users", userId, itemId]);
-  return res.value;
-}
-
 interface InitComment {
   userId: string;
   itemId: string;

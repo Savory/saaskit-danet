@@ -2,6 +2,8 @@ import {
   Controller,
   Get,
   HttpContext,
+  Param,
+  Query,
   Req,
   Res,
   Session,
@@ -21,10 +23,14 @@ export class OAuth2Controller {
   ) {
   }
 
-  @Get("login")
-  async login(@Session() session: OakSession, @Res() response: any) {
+  @Get("login/:provider")
+  async login(
+    @Session() session: OakSession,
+    @Res() response: any,
+    @Param("provider") provider: string,
+  ) {
     const { uri, codeVerifier } = await this.oauth2Service
-      .getAuthorizationUri();
+      .getAuthorizationUri(provider);
     session.flash("codeVerifier", codeVerifier);
     response.redirect(uri);
   }
