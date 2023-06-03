@@ -14,7 +14,9 @@ export class User {
   @ApiProperty()
   isSubscribed?: boolean;
 
-  constructor(email: string, username: string) {
+  password?: string;
+
+  constructor(email: string, username: string, password?: string) {
     this.email = email;
     this.username = username;
   }
