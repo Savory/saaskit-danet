@@ -8,7 +8,6 @@ export class OAuth2Service {
   private client: OAuth2Client;
 
   constructor(
-    private userService: UserService,
     private authService: AuthService,
   ) {
     this.client = new OAuth2Client({
@@ -34,15 +33,10 @@ export class OAuth2Service {
     const externalUserData = await this.getUser(
       tokens.accessToken,
     );
-    const user = await this.userService.getOrCreateUser(
+    return this.authService.registerOrLoginOAuth2(
       externalUserData.email,
       externalUserData.name,
     );
-    return this.authService.generateUserToken({
-      _id: user._id,
-      email: user.email,
-      username: user.username,
-    });
   }
 
   getAuthorizationUri() {

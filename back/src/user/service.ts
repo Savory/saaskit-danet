@@ -6,25 +6,15 @@ import { User } from "./class.ts";
 export class UserService {
   constructor(@Inject(USER_REPOSITORY) private repository: UserRepository) {}
 
-  async getOrCreateUser(email: string, username: string, provider = "google") {
-    const userInDb = await this.repository.getByEmail(email);
-    if (userInDb) {
-      return userInDb;
-    }
-    return this.createUser(email, username, provider);
+  async getUserByEmail(email: string) {
+    return this.repository.getByEmail(email);
   }
 
   async createUser(
     email: string,
     username: string,
-    provider: string,
     password?: string,
   ) {
-    if (provider === "password") {
-      if (!password) {
-        throw new Error("Password Required");
-      }
-    }
     return this.repository.create(new User(email, username, password));
   }
 
