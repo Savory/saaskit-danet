@@ -17,9 +17,7 @@ import { AuthService } from "../service.ts";
 @Controller("oauth2")
 export class OAuth2Controller {
   constructor(
-    private authService: AuthService,
     private oauth2Service: OAuth2Service,
-    private userService: UserService,
   ) {
   }
 
@@ -38,21 +36,6 @@ export class OAuth2Controller {
     if (typeof codeVerifier !== "string") {
       throw new Error("invalid codeVerifier");
     }
-    const tokens = await this.oauth2Service.getTokens(
-      request.url,
-      codeVerifier,
-    );
-    const externalUserData = await this.oauth2Service.getUser(
-      tokens.accessToken,
-    );
-    const user = await this.userService.getOrCreateUser(
-      externalUserData.email,
-      externalUserData.name,
-    );
-    return this.authService.generateUserToken({
-      _id: user._id,
-      email: user.email,
-      username: user.username,
-    });
+    return this.oauth2Service.registerOrLoginUser(request.url, codeVerifier);
   }
 }

@@ -1,11 +1,16 @@
 import { Injectable } from "danet/mod.ts";
 import { OAuth2Client } from "oauth2_client/mod.ts";
+import { UserService } from "../../user/service.ts";
+import { AuthService } from "../service.ts";
 
 @Injectable()
 export class OAuth2Service {
   private client: OAuth2Client;
 
-  constructor() {
+  constructor(
+    private userService: UserService,
+    private authService: AuthService,
+  ) {
     this.client = new OAuth2Client({
       clientId: Deno.env.get("CLIENT_ID")!,
       clientSecret: Deno.env.get("CLIENT_SECRET")!,
@@ -18,6 +23,25 @@ export class OAuth2Service {
           "https://www.googleapis.com/auth/userinfo.profile",
         ],
       },
+    });
+  }
+
+  async registerOrLoginUser(url: string, codeVerifier: string) {
+    const tokens = await this.getTokens(
+      url,
+      codeVerifier,
+    );
+    const externalUserData = await this.getUser(
+      tokens.accessToken,
+    );
+    const user = await this.userService.getOrCreateUser(
+      externalUserData.email,
+      externalUserData.name,
+    );
+    return this.authService.generateUserToken({
+      _id: user._id,
+      email: user.email,
+      username: user.username,
     });
   }
 

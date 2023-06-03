@@ -11,10 +11,10 @@ export class UserService {
     if (userInDb) {
       return userInDb;
     }
-    return this.registerUser(email, username, provider);
+    return this.createUser(email, username, provider);
   }
 
-  async registerUser(
+  async createUser(
     email: string,
     username: string,
     provider: string,
