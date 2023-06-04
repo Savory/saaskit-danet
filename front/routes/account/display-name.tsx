@@ -7,26 +7,16 @@ import {
   INPUT_STYLES,
   NOTICE_STYLES,
 } from "@/utils/constants.ts";
-import {
-  getOrCreateUser,
-  getUserDisplayName,
-  setUserDisplayName,
-  type User,
-} from "@/utils/db.ts";
-import type { AccountState } from "./_middleware.ts";
+import { type User } from "@/utils/db.ts";
 import { redirect } from "@/utils/http.ts";
+import { State } from "../_middleware.ts";
 
-interface DisplayNamePageData {
-  user: User;
+interface DisplayNamePageData extends State {
 }
 
-export const handler: Handlers<DisplayNamePageData, AccountState> = {
+export const handler: Handlers<DisplayNamePageData, State> = {
   async GET(_req, ctx) {
-    const user = await getOrCreateUser(
-      ctx.state.session.user.id,
-      ctx.state.session.user.email!,
-    );
-    return ctx.render({ user });
+    return ctx.render({ ...ctx.state });
   },
   async POST(req, ctx) {
     try {
@@ -37,7 +27,7 @@ export const handler: Handlers<DisplayNamePageData, AccountState> = {
         throw new Error("Display name must be a string");
       }
 
-      await setUserDisplayName(ctx.state.session.user.id, displayName);
+      await setUserDisplayName(ctx.state.actualUser._id, displayName);
       return redirect("/account");
     } catch (error) {
       return redirect(

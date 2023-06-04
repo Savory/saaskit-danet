@@ -1,8 +1,6 @@
 // Copyright 2023 the Deno authors. All rights reserved. MIT license.
 import type { Handlers } from "$fresh/server.ts";
 import { stripe } from "@/utils/payments.ts";
-import type { AccountState } from "./_middleware.ts";
-import { getOrCreateUser } from "@/utils/db.ts";
 import { redirect } from "@/utils/http.ts";
 
 export const handler: Handlers<null, AccountState> = {

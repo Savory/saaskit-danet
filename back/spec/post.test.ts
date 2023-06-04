@@ -15,7 +15,7 @@ import { DanetApplication } from "danet/mod.ts";
 import { ItemService } from "../src/item/service.ts";
 import { Item } from "../src/item/class.ts";
 import { Comment } from "../src/item/comment/class.ts";
-import { InMemoryCommentRepository } from "../src/item/comment/in-memory.repository.ts";
+import { InMemoryCommentRepository } from "../src/item/comment/repository.memory.ts";
 import { Repository } from "../src/database/repository.ts";
 import { COMMENT_REPOSITORY } from "../src/item/comment/constant.ts";
 

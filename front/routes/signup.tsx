@@ -7,12 +7,8 @@ import { NOTICE_STYLES } from "@/utils/constants.ts";
 import type { Handlers } from "$fresh/server.ts";
 import { REDIRECT_PATH_AFTER_LOGIN } from "@/utils/constants.ts";
 import type { State } from "./_middleware.ts";
-import { stripe } from "@/utils/payments.ts";
-import { createUser } from "@/utils/db.ts";
 import { BUTTON_STYLES, INPUT_STYLES } from "@/utils/constants.ts";
 import { redirect } from "@/utils/http.ts";
-import { Status } from "std/http/http_status.ts";
-
 // deno-lint-ignore no-explicit-any
 export const handler: Handlers<any, State> = {
   async POST(req, ctx) {
@@ -21,20 +17,7 @@ export const handler: Handlers<any, State> = {
     const email = form.get("email") as string;
     const password = form.get("password") as string;
 
-    const { data, error } = await ctx.state.supabaseClient
-      .auth.signUp({ email, password });
-
-    if (error) {
-      return redirect(`/signup?error=${encodeURIComponent(error.message)}`);
-    }
-
-    const { id } = await stripe.customers.create({ email });
-    await createUser({
-      displayName,
-      id: data.user!.id,
-      stripeCustomerId: id,
-    });
-
+    //TODO Call Danet
     const redirectUrl = new URL(req.url).searchParams.get("redirect_url") ??
       REDIRECT_PATH_AFTER_LOGIN;
 

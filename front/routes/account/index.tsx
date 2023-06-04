@@ -2,22 +2,16 @@
 import type { Handlers, PageProps } from "$fresh/server.ts";
 import Head from "@/components/Head.tsx";
 import Layout from "@/components/Layout.tsx";
-import type { AccountState } from "./_middleware.ts";
 import { BUTTON_STYLES, NOTICE_STYLES } from "@/utils/constants.ts";
 import { getOrCreateUser, getUserDisplayName, type User } from "@/utils/db.ts";
 import { ComponentChild } from "preact";
+import { State } from "../_middleware.ts";
 
-interface AccountPageData extends AccountState {
-  user: User;
-}
-
-export const handler: Handlers<AccountPageData, AccountState> = {
+export const handler: Handlers<any, State> = {
   async GET(_request, ctx) {
-    const user = await getOrCreateUser(
-      ctx.state.session.user.id,
-      ctx.state.session.user.email!,
-    );
-    return user ? ctx.render({ ...ctx.state, user }) : ctx.renderNotFound();
+    return ctx.state.actualUser
+      ? ctx.render({ ...ctx.state })
+      : ctx.renderNotFound();
   },
 };
 
@@ -43,8 +37,12 @@ function Row(props: RowProps) {
   );
 }
 
-export default function AccountPage(props: PageProps<AccountPageData>) {
-  const action = props.data.user.isSubscribed ? "Manage" : "Upgrade";
+export default function AccountPage(
+  props: PageProps<
+    { actualUser: User }
+  >,
+) {
+  const action = props.data.actualUser.isSubscribed ? "Manage" : "Upgrade";
   const hasResetPassword = new URL(props.url).searchParams.get(
     "has_reset_password",
   );
@@ -52,7 +50,7 @@ export default function AccountPage(props: PageProps<AccountPageData>) {
   return (
     <>
       <Head title="Account" href={props.url.href} />
-      <Layout session={props.data.session}>
+      <Layout actualUser={props.data.actualUser}>
         <div class="max-w-lg m-auto w-full flex-1 p-4 flex flex-col justify-center">
           <h1 class="text-3xl mb-4">
             <strong>Account</strong>
@@ -65,14 +63,14 @@ export default function AccountPage(props: PageProps<AccountPageData>) {
           <ul>
             <Row
               title="Display name"
-              text={getUserDisplayName(props.data.user)}
+              text={props.data.actualUser.username}
             >
               <a href="/account/display-name" class="underline">Edit</a>
             </Row>
-            <Row title="Email" text={props.data.session!.user.email!} />
+            <Row title="Email" text={props.data.actualUser!.email!} />
             <Row
               title="Subscription"
-              text={props.data.user.isSubscribed ? "Premium 🦕" : "Free"}
+              text={props.data.actualUser.isSubscribed ? "Premium 🦕" : "Free"}
             >
               <a
                 class="underline"

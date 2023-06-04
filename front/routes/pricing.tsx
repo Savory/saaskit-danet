@@ -7,11 +7,9 @@ import { BUTTON_STYLES } from "@/utils/constants.ts";
 import { formatAmountForDisplay, stripe } from "@/utils/payments.ts";
 import Stripe from "stripe";
 import { ComponentChild } from "preact";
-import { getOrCreateUser, User } from "@/utils/db.ts";
 
 interface PricingPageData extends State {
   products: Stripe.Product[];
-  user: User | null;
 }
 
 function comparePrices(productA: Stripe.Product, productB: Stripe.Product) {
@@ -27,14 +25,7 @@ export const handler: Handlers<PricingPageData, State> = {
     });
     const products = data.sort(comparePrices);
 
-    const user = ctx.state.session
-      ? await getOrCreateUser(
-        ctx.state.session.user.id,
-        ctx.state.session.user.email!,
-      )
-      : null;
-
-    return await ctx.render({ ...ctx.state, products, user });
+    return await ctx.render({ ...ctx.state, products });
   },
 };
 
@@ -77,7 +68,7 @@ export default function PricingPage(props: PageProps<PricingPageData>) {
   return (
     <>
       <Head title="Pricing" href={props.url.href} />
-      <Layout session={props.data.session}>
+      <Layout actualUser={props.data.actualUser}>
         <div
           class={`mx-auto max-w-4xl w-full flex-1 flex flex-col justify-center px-8`}
         >
@@ -105,7 +96,7 @@ export default function PricingPage(props: PageProps<PricingPageData>) {
                 product.default_price as Stripe.Price,
               )}
             >
-              {props.data.user?.isSubscribed
+              {props.data.actualUser?.isSubscribed
                 ? (
                   <a
                     class={`${BUTTON_STYLES} w-full rounded-md block`}

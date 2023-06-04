@@ -1,18 +1,22 @@
 // Copyright 2023 the Deno authors. All rights reserved. MIT license.
+import { getCookies } from "std/http/cookie.ts";
 import { MiddlewareHandlerContext } from "$fresh/server.ts";
-import { createSupabaseClient } from "@/utils/auth.ts";
-import type { Session } from "@supabase/supabase-js";
 import { walk } from "std/fs/walk.ts";
-
+import { decode, Payload } from "jwt/mod.ts";
+import { User } from "../utils/db.ts";
 const STATIC_DIR_ROOT = new URL("../static", import.meta.url);
 const staticFileNames: string[] = [];
 for await (const { name } of walk(STATIC_DIR_ROOT, { includeDirs: false })) {
   staticFileNames.push(name);
 }
 
+function isExpired(exp: number, leeway: number): boolean {
+  return exp + leeway < Date.now() / 1000;
+}
+
 export interface State {
-  session: Session | null;
-  supabaseClient: ReturnType<typeof createSupabaseClient>;
+  accessToken: string;
+  actualUser: User;
 }
 
 export async function handler(
@@ -20,24 +24,26 @@ export async function handler(
   ctx: MiddlewareHandlerContext<State>,
 ) {
   const { pathname } = new URL(req.url);
+  console.log("url", req.url);
   // Don't process session-related data for keepalive and static requests
   if (["_frsh", ...staticFileNames].some((part) => pathname.includes(part))) {
     return await ctx.next();
   }
+  const accessToken = getAccessToken(req.headers);
+  if (accessToken) {
+    const [_header, payload, _signature] = decode(accessToken);
+    if (!isExpired((payload as Payload).exp!, 0)) {
+      ctx.state.accessToken = accessToken;
+      ctx.state.actualUser = payload as {
+        _id: string;
+        username: string;
+        email: string;
+      };
+    }
+  }
+  return ctx.next();
+}
 
-  const headers = new Headers();
-  const supabaseClient = createSupabaseClient(req.headers, headers);
-
-  const { data: { session } } = await supabaseClient.auth.getSession();
-
-  ctx.state.session = session;
-  ctx.state.supabaseClient = supabaseClient;
-
-  const response = await ctx.next();
-  /**
-   * Note: ensure that a `new Response()` with a `location` header is used when performing server-side redirects.
-   * Using `Response.redirect()` will throw as its headers are immutable.
-   */
-  headers.forEach((value, key) => response.headers.set(key, value));
-  return response;
+function getAccessToken(headers: Headers) {
+  return getCookies(headers)["ACCESS_TOKEN"];
 }

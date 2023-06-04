@@ -7,7 +7,7 @@ import {
   SITE_WIDTH_STYLES,
 } from "@/utils/constants.ts";
 import Logo from "./Logo.tsx";
-import type { Session } from "@supabase/supabase-js";
+import { User } from "../utils/db.ts";
 
 function Notice() {
   return (
@@ -83,7 +83,7 @@ function Footer(props: JSX.HTMLAttributes<HTMLElement>) {
 
 interface LayoutProps {
   children: ComponentChildren;
-  session: Session | null;
+  actualUser: User;
 }
 
 export default function Layout(props: LayoutProps) {
@@ -92,7 +92,7 @@ export default function Layout(props: LayoutProps) {
       href: "/pricing",
       inner: "Pricing",
     },
-    props.session
+    props.actualUser
       ? {
         href: "/account",
         inner: "Account",

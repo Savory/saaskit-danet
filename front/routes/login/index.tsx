@@ -8,6 +8,7 @@ import { REDIRECT_PATH_AFTER_LOGIN } from "@/utils/constants.ts";
 import type { State } from "@/routes/_middleware.ts";
 import { BUTTON_STYLES, INPUT_STYLES } from "@/utils/constants.ts";
 import { redirect } from "@/utils/http.ts";
+import { deleteCookie } from "std/http/cookie.ts";
 
 // deno-lint-ignore no-explicit-any
 export const handler: Handlers<any, State> = {
@@ -16,29 +17,19 @@ export const handler: Handlers<any, State> = {
    * If not logged in, it continues to rendering the login page.
    */
   async GET(_req, ctx) {
-    const { data: { session } } = await ctx.state.supabaseClient.auth
-      .getSession();
-
-    if (session) {
-      return redirect("/");
+    if (ctx.state.accessToken) {
+      const response = redirect("/");
+      deleteCookie(response.headers, "ACCESS_TOKEN", { path: "/" });
+      return response;
     }
-
     return ctx.render();
   },
   async POST(req, ctx) {
     const form = await req.formData();
     const email = form.get("email") as string;
     const password = form.get("password") as string;
-
-    const { error } = await ctx.state.supabaseClient
-      .auth.signInWithPassword({ email, password });
-
-    let redirectUrl = new URL(req.url).searchParams.get("redirect_url") ??
-      REDIRECT_PATH_AFTER_LOGIN;
-    if (error) {
-      redirectUrl = `/login?error=${encodeURIComponent(error.message)}`;
-    }
-
+    let redirectUrl = new URL(req.url).searchParams.get("redirect_url") ?? "";
+    //TODO Call Danet API
     return redirect(redirectUrl);
   },
 };
@@ -58,7 +49,8 @@ export default function LoginPage(props: PageProps) {
   return (
     <>
       <Head title="Login" href={props.url.href} />
-      <div class="max-w-xs flex h-screen m-auto">
+      <div class="max-w-xs flex h-scr
+      een m-auto">
         <div class="m-auto w-72">
           <a href="/">
             <Logo class="mb-8" />
@@ -87,15 +79,17 @@ export default function LoginPage(props: PageProps) {
           </form>
           <hr class="my-4" />
           <OAuthLoginButton
-            provider="github"
-            disabled={props.url.hostname === "localhost"}
+            provider="discord"
+            disabled={false}
+            redirectUrl={props.url.protocol + "//" + props.url.host +
+              "/login/success"}
           >
             <img
               src="/github-mark.svg"
               alt="GitHub logo"
               class="inline mr-2 h-5 w-5 align-text-top"
             />
-            Login with GitHub
+            Login with Discord
           </OAuthLoginButton>
           <div class="text-center text-gray-500 space-y-2 mt-8">
             <p class="hover:text-black">

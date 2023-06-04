@@ -113,35 +113,14 @@ export async function getVotedItemIdsByUser(
 }
 
 interface InitUser {
-  id: string;
-  stripeCustomerId: string;
-  displayName: string;
+  _id: string;
+  stripeCustomerId?: string;
+  username: string;
+  email?: string;
 }
 
 export interface User extends InitUser {
-  isSubscribed: boolean;
-}
-
-export async function createUser(initUser: InitUser) {
-  const usersKey = ["users", initUser.id];
-  const stripeCustomersKey = [
-    "user_ids_by_stripe_customer",
-    initUser.stripeCustomerId,
-  ];
-  const user: User = { ...initUser, isSubscribed: false };
-
-  const res = await kv.atomic()
-    .check({ key: usersKey, versionstamp: null })
-    .check({ key: stripeCustomersKey, versionstamp: null })
-    .set(usersKey, user)
-    .set(stripeCustomersKey, user.id)
-    .commit();
-
-  if (!res.ok) {
-    throw res;
-  }
-
-  return user;
+  isSubscribed?: boolean;
 }
 
 export async function getUserById(id: string) {
@@ -182,38 +161,6 @@ export async function getUsersByIds(ids: string[]) {
   const res = await kv.getMany<User[]>(keys);
   return res.map((entry) => entry.value!);
 }
-
-export async function getOrCreateUser(id: string, email: string) {
-  const user = await getUserById(id);
-  if (user) return user;
-
-  const customer = await stripe.customers.create({ email });
-  return await createUser({
-    id,
-    stripeCustomerId: customer.id,
-    displayName: "",
-  });
-}
-
-export function getUserDisplayName(user?: User) {
-  return user?.displayName || user?.id || "unknown user";
-}
-
-export async function setUserDisplayName(
-  userId: User["id"],
-  displayName: User["displayName"],
-) {
-  const userKey = ["users", userId];
-  const userRes = await kv.get<User>(userKey);
-
-  if (!userRes.versionstamp) throw new Error("User does not exist");
-
-  await kv.atomic()
-    .check(userRes)
-    .set(userKey, { ...userRes.value, displayName })
-    .commit();
-}
-
 export async function getAllUsers(options?: Deno.KvListOptions) {
   const iter = await kv.list<Item>({ prefix: ["users"] }, options);
   const items = [];

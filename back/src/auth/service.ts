@@ -1,5 +1,5 @@
 import { Injectable } from "danet/mod.ts";
-import { create, verify } from "jwt/mod.ts";
+import { create, getNumericDate, verify } from "jwt/mod.ts";
 import { User } from "../user/class.ts";
 import { OnAppBootstrap } from "danet/src/hook/interfaces.ts";
 import { UserService } from "../user/service.ts";
@@ -31,7 +31,10 @@ export class AuthService implements OnAppBootstrap {
   generateUserToken(
     userData: Omit<User, "avatarUrl" | "isSubscribed">,
   ): Promise<string> {
-    return create({ alg: "HS512", typ: "JWT" }, userData, this.key);
+    return create({ alg: "HS512", typ: "JWT" }, {
+      ...userData,
+      exp: getNumericDate(60 * 60),
+    }, this.key);
   }
 
   verifyToken(token: string) {

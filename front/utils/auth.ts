@@ -39,7 +39,7 @@ export async function ensureLoggedInMiddleware(
   req: Request,
   ctx: MiddlewareHandlerContext,
 ) {
-  if (!ctx.state.session) {
+  if (!ctx.state.actualUser) {
     return redirect(`/login?redirect_url=${encodeURIComponent(req.url)}`);
   }
 

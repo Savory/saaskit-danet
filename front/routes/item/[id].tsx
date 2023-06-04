@@ -17,7 +17,6 @@ import {
   getItemById,
   getItemUpvoteInfo,
   getUserById,
-  getUserDisplayName,
   getUsersByIds,
   getVotedItemIdsByUser,
   type Item,
@@ -64,7 +63,7 @@ export const handler: Handlers<ItemPageData, State> = {
     });
   },
   async POST(req, ctx) {
-    if (!ctx.state.session) {
+    if (!ctx.state.actualUser) {
       /** @todo Figure out `redirect_to` query */
       return redirect("/login");
     }
@@ -77,7 +76,7 @@ export const handler: Handlers<ItemPageData, State> = {
     }
 
     await createComment({
-      userId: ctx.state.session.user.id,
+      userId: ctx.state.actualUser._id,
       itemId: ctx.params.id,
       text,
     });
@@ -90,7 +89,7 @@ export default function ItemPage(props: PageProps<ItemPageData>) {
   return (
     <>
       <Head title={props.data.item.title} href={props.url.href} />
-      <Layout session={props.data.session}>
+      <Layout actualUser={props.data.actualUser}>
         <div class={`${SITE_WIDTH_STYLES} flex-1 px-4 space-y-8`}>
           <ItemSummary
             item={props.data.item}
