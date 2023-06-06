@@ -1,15 +1,14 @@
 import { Inject, Injectable } from "danet/mod.ts";
 import { Vote } from "./class.ts";
 import { VOTE_REPOSITORY } from "./constant.ts";
-import type { CommentRepository } from "./repository.ts";
-import type { ActualUserService } from "../../auth/actual-user.service.ts";
-import { ACTUAL_USER_SERVICE } from "../../auth/constant.ts";
+import type { VoteRepository } from "./repository.ts";
+import { ActualUserService } from "../../auth/actual-user.service.ts";
 
 @Injectable()
 export class VoteService {
   constructor(
-    @Inject(VOTE_REPOSITORY) private repository: CommentRepository,
-    @Inject(ACTUAL_USER_SERVICE) private actualUserService: ActualUserService,
+    @Inject(VOTE_REPOSITORY) private repository: VoteRepository,
+    private actualUserService: ActualUserService,
   ) {}
 
   async upvote(itemId: string) {

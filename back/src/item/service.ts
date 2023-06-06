@@ -10,15 +10,13 @@ import type { Repository } from "../database/repository.ts";
 import { ITEM_REPOSITORY } from "./constant.ts";
 import { CommentService } from "./comment/service.ts";
 import { VoteService } from "./vote/service.ts";
-import { Vote } from "./vote/class.ts";
-import type { ActualUserService } from "../auth/actual-user.service.ts";
-import { ACTUAL_USER_SERVICE } from "../auth/constant.ts";
+import { ActualUserService } from "../auth/actual-user.service.ts";
 
 @Injectable()
 export class ItemService {
   constructor(
     @Inject(ITEM_REPOSITORY) private repository: Repository<Item>,
-    @Inject(ACTUAL_USER_SERVICE) private authService: ActualUserService,
+    private authService: ActualUserService,
     private commentService: CommentService,
     private voteService: VoteService,
   ) {
