@@ -24,6 +24,8 @@ export class UserService {
     return user;
   }
 
+  async updateMyInfo(update)
+
   async getUserPublicInformation(
     userId: string,
   ): Promise<PublicUserInformation> {

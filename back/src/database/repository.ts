@@ -3,7 +3,7 @@ export interface Repository<T extends unknown> {
   getById(id: string): Promise<T | undefined>;
   // deno-lint-ignore no-explicit-any
   create(dto: unknown): Promise<any>;
-  updateOne(id: string, dto: T): Promise<unknown>;
+  updateOne(id: string, dto: Partial<T>): Promise<unknown>;
   deleteOne(id: string): Promise<unknown>;
   deleteAll(): Promise<unknown>;
 }

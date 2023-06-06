@@ -28,7 +28,16 @@ export const handler: Handlers<DisplayNamePageData, State> = {
       }
 
       //TODO call Danet API
-      // await setUserDisplayName(ctx.state.actualUser._id, displayName);
+      await fetch(
+        `${Deno.env.get("API_URL")}/auth/me`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({ username: displayName }),
+          headers: {
+            authorization: `Bearer ${ctx.state.accessToken}`,
+          },
+        },
+      );
       return redirect("/account");
     } catch (error) {
       return redirect(

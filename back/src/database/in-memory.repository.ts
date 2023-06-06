@@ -21,13 +21,14 @@ export class InMemoryRepository<T extends { _id: string }>
   }
 
   async updateOne(itemId: string, item: T) {
-    this.items.forEach((t: T) => {
+    this.items = this.items.map((t: T) => {
       if (t._id === itemId) {
         t = {
           ...t,
           ...item,
         };
       }
+      return t;
     });
     return undefined;
   }

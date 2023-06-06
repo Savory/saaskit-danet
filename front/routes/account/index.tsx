@@ -3,15 +3,30 @@ import type { Handlers, PageProps } from "$fresh/server.ts";
 import Head from "@/components/Head.tsx";
 import Layout from "@/components/Layout.tsx";
 import { BUTTON_STYLES, NOTICE_STYLES } from "@/utils/constants.ts";
-import { getOrCreateUser, getUserDisplayName, type User } from "@/utils/db.ts";
+import { type User } from "@/utils/db.ts";
 import { ComponentChild } from "preact";
 import { State } from "../_middleware.ts";
 
 export const handler: Handlers<any, State> = {
   async GET(_request, ctx) {
-    return ctx.state.actualUser
-      ? ctx.render({ ...ctx.state })
-      : ctx.renderNotFound();
+    if (!ctx.state.actualUser) {
+      return ctx.renderNotFound();
+    }
+    try {
+      const response = await fetch(
+        `${Deno.env.get("API_URL")}/auth/me`,
+        {
+          method: "GET",
+          headers: {
+            authorization: `Bearer ${ctx.state.accessToken}`,
+          },
+        },
+      );
+      const actualUserData = await response.json();
+      return ctx.render({ ...ctx.state, actualUser: actualUserData });
+    } catch (e) {
+      return ctx.renderNotFound();
+    }
   },
 };
 
