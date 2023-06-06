@@ -6,7 +6,7 @@ import {
   it,
 } from "std/testing/bdd.ts";
 import { VoteService } from "./service.ts";
-import { InMemoryVoteRepository } from "./in-memory.repository.ts";
+import { InMemoryVoteRepository } from "./repository.memory.ts";
 import {
   assertEquals,
   assertRejects,
@@ -17,8 +17,8 @@ const userId = "hardcodeduser";
 describe("vote service", () => {
   const inMemoryVoteRepository = new InMemoryVoteRepository();
   const voteService = new VoteService(inMemoryVoteRepository, {
-    get: async () => ({ id: userId }),
-  });
+    get: async () => ({ _id: userId, email: "whocare", username: "ok" }),
+  } as any);
 
   afterEach(async () => {
     await inMemoryVoteRepository.deleteAll();

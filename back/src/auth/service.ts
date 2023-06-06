@@ -1,15 +1,15 @@
-import { Injectable } from "danet/mod.ts";
+import { Inject, Injectable } from "danet/mod.ts";
 import { create, getNumericDate, verify } from "jwt/mod.ts";
 import { User } from "../user/class.ts";
 import { OnAppBootstrap } from "danet/src/hook/interfaces.ts";
-import { UserService } from "../user/service.ts";
+import { USER_REPOSITORY, type UserRepository } from "../user/repository.ts";
 
 @Injectable()
 export class AuthService implements OnAppBootstrap {
   private key!: CryptoKey;
 
   constructor(
-    private userService: UserService,
+    @Inject(USER_REPOSITORY) private userRepository: UserRepository,
   ) {
   }
 
@@ -46,22 +46,29 @@ export class AuthService implements OnAppBootstrap {
     username: string,
     provider: string,
     password?: string,
-  ): Promise<User> {
+  ): Promise<string> {
     if (provider === "local" && !password) {
       throw new Error("PasswordRequired");
     }
-    return this.userService.createUser(email, username);
+    const user = await this.userRepository.create(
+      new User(email, username, password),
+    );
+    return this.generateUserToken({
+      _id: user._id,
+      email: user.email,
+      username: user.username,
+    });
   }
 
   async registerOrLoginOAuth2(
     email: string,
     username: string,
   ) {
-    let user = await this.userService.getUserByEmail(
+    let user = await this.userRepository.getByEmail(
       email,
     );
     if (!user) {
-      user = await this.registerUser(email, username, "google");
+      return this.registerUser(email, username, "google");
     }
     return this.generateUserToken({
       _id: user._id,
