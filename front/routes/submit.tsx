@@ -9,14 +9,14 @@ import { redirect } from "@/utils/http.ts";
 import { Status } from "std/http/http_status.ts";
 export const handler: Handlers<State, State> = {
   GET(req, ctx) {
-    if (!ctx.state.session) {
+    if (!ctx.state.actualUser) {
       return redirect(`/login?redirect_url=${encodeURIComponent(req.url)}`);
     }
 
     return ctx.render(ctx.state);
   },
   async POST(req, ctx) {
-    if (!ctx.state.session) {
+    if (!ctx.state.actualUser) {
       await req.body?.cancel();
       return new Response(null, { status: 401 });
     }
@@ -37,10 +37,9 @@ export const handler: Handlers<State, State> = {
     }
 
     const item = await createItem({
-      userId: ctx.state.session!.user.id,
       title,
       url,
-    });
+    }, ctx.state.accessToken);
 
     return redirect(`/item/${item!._id}`);
   },

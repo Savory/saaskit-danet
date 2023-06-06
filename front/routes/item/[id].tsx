@@ -37,29 +37,25 @@ export const handler: Handlers<ItemPageData, State> = {
   async GET(_req, ctx) {
     const { id } = ctx.params;
 
-    const item = await getItemById(id);
+    const item = await getItemById(id, ctx.state.accessToken);
     if (item === null) {
       return ctx.renderNotFound();
     }
 
     const comments = await getCommentsByItem(id);
+    console.log(comments);
     const commentsUsers = await getUsersByIds(
       comments.map((comment) => comment.userId),
     );
     const user = await getUserById(item.userId);
-
-    const itemUpvotesInfo = await getItemUpvoteInfo(item._id);
-
+    console.log(item);
     return ctx.render({
       ...ctx.state,
-      item: {
-        ...item,
-        score: itemUpvotesInfo.count,
-      },
+      item,
       comments,
       user: user!,
       commentsUsers,
-      isVoted: itemUpvotesInfo.userHasVoted,
+      isVoted: item.userHasVoted,
     });
   },
   async POST(req, ctx) {
@@ -79,7 +75,7 @@ export const handler: Handlers<ItemPageData, State> = {
       userId: ctx.state.actualUser._id,
       itemId: ctx.params.id,
       text,
-    });
+    }, ctx.state.accessToken);
 
     return redirect(`/item/${ctx.params.id}`);
   },
@@ -105,7 +101,7 @@ export default function ItemPage(props: PageProps<ItemPageData>) {
             {props.data.comments.map((comment, index) => (
               <div class="py-4">
                 <p>
-                  {getUserDisplayName(props.data.commentsUsers[index])}
+                  {props.data.commentsUsers[index]?.username ?? "unknown user"}
                 </p>
                 <p class="text-gray-500">
                   {timeAgo(new Date(comment.createdAt))} ago

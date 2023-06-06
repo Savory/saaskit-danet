@@ -16,13 +16,13 @@ export class VoteService {
     const user = await this.actualUserService.get();
     const userVoteOnitem = await this.repository.getByItemIdAndUserId(
       itemId,
-      user.id,
+      user._id,
     );
     if (userVoteOnitem) {
       throw new Error("userAlreadyVoted");
     }
     return this.repository.create(
-      new Vote(itemId, user.id, new Date()),
+      new Vote(itemId, user._id, new Date()),
     );
   }
 
@@ -31,19 +31,24 @@ export class VoteService {
   }
 
   async userHasVotedOnItem(itemId: string) {
-    const user = await this.actualUserService.get();
-    const userVoteOnitem = await this.repository.getByItemIdAndUserId(
-      itemId,
-      user.id,
-    );
-    return !!userVoteOnitem;
+    let userVoteOnitem = false;
+    try {
+      const user = await this.actualUserService.get();
+      userVoteOnitem = !!(await this.repository.getByItemIdAndUserId(
+        itemId,
+        user._id,
+      ));
+    } catch (e) {
+      // user not connected
+    }
+    return userVoteOnitem;
   }
 
   async removeUpvote(itemId: string) {
     const user = await this.actualUserService.get();
     const userVoteOnitem = await this.repository.getByItemIdAndUserId(
       itemId,
-      user.id,
+      user._id,
     );
     if (!userVoteOnitem) {
       throw new Error("userDidNotUpvote");

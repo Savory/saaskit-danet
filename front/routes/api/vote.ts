@@ -7,7 +7,7 @@ async function sharedHandler(
   req: Request,
   ctx: HandlerContext<PageProps<undefined>, State>,
 ) {
-  if (!ctx.state.session) {
+  if (!ctx.state.actualUser) {
     return new Response(null, { status: 401 });
   }
 
@@ -17,17 +17,17 @@ async function sharedHandler(
     return new Response(null, { status: 400 });
   }
 
-  const userId = ctx.state.session.user.id;
+  const userId = ctx.state.actualUser._id;
   const vote = { userId, itemId };
   let status;
   switch (req.method) {
     case "DELETE":
       status = 204;
-      await deleteVote(vote);
+      await deleteVote(vote, ctx.state.accessToken);
       break;
     case "POST":
       status = 201;
-      await createVote(vote);
+      await createVote(vote, ctx.state.accessToken);
       break;
     default:
       return new Response(null, { status: 400 });

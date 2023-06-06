@@ -1,6 +1,7 @@
-import { Inject, Injectable } from "danet/mod.ts";
+import { Inject, Injectable, NotFoundException } from "danet/mod.ts";
 import { USER_REPOSITORY, type UserRepository } from "./repository.ts";
-import { User } from "./class.ts";
+import { PublicUserInformation, User } from "./class.ts";
+import { ConstructSignatureDeclaration } from "https://deno.land/x/ts_morph@17.0.1/ts_morph.js";
 
 @Injectable()
 export class UserService {
@@ -21,5 +22,37 @@ export class UserService {
   async getMyInfo(userId: string) {
     const user = await this.repository.getById(userId);
     return user;
+  }
+
+  async getUserPublicInformation(
+    userId: string,
+  ): Promise<PublicUserInformation> {
+    const user = await this.repository.getById(userId);
+    if (!user) {
+      throw new NotFoundException();
+    }
+    return {
+      username: user?.username,
+      avatarUrl: user?.avatarUrl,
+      _id: user._id,
+    };
+  }
+
+  async getMultipleUserPublicInformation(
+    userIds: string[],
+  ): Promise<PublicUserInformation[]> {
+    const users = [];
+    for (const userId of userIds) {
+      const user = await this.repository.getById(userId);
+      if (!user) {
+        continue;
+      }
+      users.push({
+        username: user?.username,
+        avatarUrl: user?.avatarUrl,
+        _id: user._id,
+      });
+    }
+    return users;
   }
 }

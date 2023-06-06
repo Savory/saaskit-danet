@@ -21,3 +21,13 @@ export class User {
     this.username = username;
   }
 }
+
+export class PublicUserInformation
+  implements Pick<User, "username" | "avatarUrl" | "_id"> {
+  @ApiProperty()
+  _id!: string;
+  @ApiProperty()
+  username!: string;
+  @ApiProperty()
+  avatarUrl?: string | undefined;
+}

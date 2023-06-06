@@ -17,6 +17,7 @@ export class InMemoryRepository<T extends { _id: string }>
 
   async create(item: T) {
     this.items.push(item);
+    console.log(this.items);
     return item;
   }
 

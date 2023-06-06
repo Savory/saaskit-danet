@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from "danet/mod.ts";
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from "danet/mod.ts";
 import { CreateItemDTO, Item } from "./class.ts";
 import { Comment } from "./comment/class.ts";
 import type { Repository } from "../database/repository.ts";
@@ -32,14 +37,23 @@ export class ItemService {
     return Promise.all(promises);
   }
 
-  getById(id: string) {
-    return this.repository.getById(id);
+  async getById(id: string) {
+    const item = await this.repository.getById(id);
+    if (!item) {
+      throw new NotFoundException();
+    }
+    const voteData = await this.getUpvoteCount(item._id);
+    return {
+      ...item,
+      userHasVoted: voteData.userHasVoted,
+      score: voteData.count,
+    };
   }
 
   async create(item: CreateItemDTO) {
     const user = await this.authService.get();
     return this.repository.create(
-      new Item(item.title, item.url, user.id, new Date()),
+      new Item(item.title, item.url, user._id, new Date()),
     );
   }
 
@@ -61,7 +75,10 @@ export class ItemService {
   ) {
     const item = await this.repository.getById(itemId);
     if (!item) throw new BadRequestException();
-    return this.commentService.create({ ...comment, itemId: itemId });
+    return this.commentService.create({
+      ...comment,
+      itemId: itemId,
+    });
   }
 
   async getComments(itemId: string) {

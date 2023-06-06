@@ -4,7 +4,6 @@ import { stripe } from "./payments.ts";
 export const kv = await Deno.openKv();
 
 interface InitItem {
-  userId: string;
   title: string;
   url: string;
 }
@@ -16,15 +15,26 @@ export interface Item extends InitItem {
   userHasVoted: boolean;
 }
 
-export async function createItem(initItem: InitItem) {
-  return (await fetch(`${Deno.env.get("API_URL")}/item`, {
+export async function createItem(initItem: InitItem, accessToken: string) {
+  const response = await fetch(`${Deno.env.get("API_URL")}/item`, {
     method: "POST",
     body: JSON.stringify(initItem),
-  })).json();
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+    },
+  });
+  if (response.status !== 200) {
+    throw new Error("Creation failed");
+  }
+  return response.json();
 }
 
-export async function getAllItems() {
-  return (await fetch(`${Deno.env.get("API_URL")}/item`)).json();
+export async function getAllItems(accessToken?: string) {
+  return (await fetch(`${Deno.env.get("API_URL")}/item`, {
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+    },
+  })).json();
 }
 
 export async function deleteAllItems() {
@@ -32,8 +42,12 @@ export async function deleteAllItems() {
   for await (const res of iter) kv.delete(res.key);
 }
 
-export async function getItemById(id: string) {
-  return (await fetch(`${Deno.env.get("API_URL")}/item/${id}`)).json();
+export async function getItemById(id: string, accessToken: string) {
+  return (await fetch(`${Deno.env.get("API_URL")}/item/${id}`, {
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+    },
+  })).json();
 }
 
 interface InitComment {
@@ -47,12 +61,18 @@ export interface Comment extends InitComment {
   createdAt: Date;
 }
 
-export async function createComment(initComment: InitComment) {
+export async function createComment(
+  initComment: InitComment,
+  accessToken: string,
+) {
   return (await fetch(
     `${Deno.env.get("API_URL")}/item/${initComment.itemId}/comment`,
     {
       method: "POST",
       body: JSON.stringify(initComment),
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
     },
   )).json();
 }
@@ -73,29 +93,38 @@ interface InitVote {
   itemId: string;
 }
 
-export async function createVote(initVote: InitVote) {
+export async function createVote(initVote: InitVote, accessToken: string) {
   return (await fetch(
     `${Deno.env.get("API_URL")}/item/${initVote.itemId}/upvote`,
     {
       method: "POST",
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
     },
   )).json();
 }
 
-export async function deleteVote(initVote: InitVote) {
+export async function deleteVote(initVote: InitVote, accessToken: string) {
   return (await fetch(
     `${Deno.env.get("API_URL")}/item/${initVote.itemId}/upvote`,
     {
       method: "DELETE",
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
     },
   )).body?.cancel();
 }
 
-export async function getItemUpvoteInfo(itemId: string) {
+export async function getItemUpvoteInfo(itemId: string, accessToken: string) {
   return (await fetch(
     `${Deno.env.get("API_URL")}/item/${itemId}/upvote`,
     {
       method: "GET",
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
     },
   )).json();
 }
@@ -124,8 +153,9 @@ export interface User extends InitUser {
 }
 
 export async function getUserById(id: string) {
-  const res = await kv.get<User>(["users", id]);
-  return res.value;
+  return (await fetch(
+    `${Deno.env.get("API_URL")}/user/${id}`,
+  )).json();
 }
 
 export async function getUserByStripeCustomerId(stripeCustomerId: string) {
@@ -157,9 +187,12 @@ export async function setUserSubscription(
 }
 
 export async function getUsersByIds(ids: string[]) {
-  const keys = ids.map((id) => ["users", id]);
-  const res = await kv.getMany<User[]>(keys);
-  return res.map((entry) => entry.value!);
+  const uniqueIds = [...new Set(ids)];
+  return (await fetch(
+    `${Deno.env.get("API_URL")}/user?${new URLSearchParams(
+      uniqueIds.map((s) => ["id", s]),
+    )}`,
+  )).json();
 }
 export async function getAllUsers(options?: Deno.KvListOptions) {
   const iter = await kv.list<Item>({ prefix: ["users"] }, options);

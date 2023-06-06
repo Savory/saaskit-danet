@@ -27,7 +27,8 @@ export const handler: Handlers<DisplayNamePageData, State> = {
         throw new Error("Display name must be a string");
       }
 
-      await setUserDisplayName(ctx.state.actualUser._id, displayName);
+      //TODO call Danet API
+      // await setUserDisplayName(ctx.state.actualUser._id, displayName);
       return redirect("/account");
     } catch (error) {
       return redirect(
@@ -62,7 +63,7 @@ export default function DisplayNamePage(props: PageProps<DisplayNamePageData>) {
           <form method="POST" class="space-y-4">
             <input
               type="text"
-              value={getUserDisplayName(props.data.user)}
+              value={props.data.actualUser.username}
               placeholder="Display name"
               name="display_name"
               required

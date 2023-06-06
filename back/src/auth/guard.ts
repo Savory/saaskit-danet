@@ -3,7 +3,7 @@ import { AuthService } from "./service.ts";
 
 @Injectable()
 export class UserConnected implements AuthGuard {
-  constructor(private authService: AuthService) {}
+  constructor(protected authService: AuthService) {}
   async canActivate(
     context: ExecutionContext,
   ): Promise<boolean> {
@@ -17,6 +17,23 @@ export class UserConnected implements AuthGuard {
     }
     const userData = await this.authService.verifyToken(token);
     context.state.userId = userData._id;
+    return true;
+  }
+}
+
+@Injectable()
+export class UserMayBeConnected extends UserConnected {
+  constructor(protected authService: AuthService) {
+    super(authService);
+  }
+  async canActivate(
+    context: ExecutionContext,
+  ): Promise<boolean> {
+    try {
+      await super.canActivate(context);
+    } catch (e) {
+      // user not connected but we don't care
+    }
     return true;
   }
 }
