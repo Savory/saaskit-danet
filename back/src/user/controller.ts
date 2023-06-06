@@ -32,7 +32,6 @@ export class UserController {
   @ReturnedType(PublicUserInformation, true)
   @Get()
   async getUsers(@Query("id", { value: "array" }) ids: string[]) {
-    console.log(ids);
     return this.userService.getMultipleUserPublicInformation(ids);
   }
 }

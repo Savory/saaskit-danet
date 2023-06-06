@@ -37,8 +37,6 @@ export class OAuth2Controller {
     session.flash("codeVerifier", codeVerifier);
     session.flash("provider", provider);
     session.flash("redirectUrl", query.redirecturl);
-    console.log(req.url);
-    console.log(query);
     response.redirect(uri);
   }
 

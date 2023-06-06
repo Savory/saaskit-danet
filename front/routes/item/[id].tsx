@@ -43,12 +43,10 @@ export const handler: Handlers<ItemPageData, State> = {
     }
 
     const comments = await getCommentsByItem(id);
-    console.log(comments);
     const commentsUsers = await getUsersByIds(
       comments.map((comment) => comment.userId),
     );
     const user = await getUserById(item.userId);
-    console.log(item);
     return ctx.render({
       ...ctx.state,
       item,

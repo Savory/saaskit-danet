@@ -24,7 +24,6 @@ export async function handler(
   ctx: MiddlewareHandlerContext<State>,
 ) {
   const { pathname } = new URL(req.url);
-  console.log("url", req.url);
   // Don't process session-related data for keepalive and static requests
   if (["_frsh", ...staticFileNames].some((part) => pathname.includes(part))) {
     return await ctx.next();
