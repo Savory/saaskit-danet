@@ -1,15 +1,15 @@
 import { ApiProperty } from "danet_swagger/decorators.ts";
 
 export class User {
-  @ApiProperty()
+  @ApiProperty({ example: "75442486-0878-440c-9db1-a7006c25a39f" })
   readonly _id = crypto.randomUUID();
 
-  @ApiProperty()
+  @ApiProperty({ example: "my email" })
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: "sorikairox" })
   username: string;
-  @ApiProperty()
+  @ApiProperty({ example: "http://placekitten.com/200/300" })
   avatarUrl?: string;
   @ApiProperty()
   isSubscribed?: boolean;
@@ -24,10 +24,10 @@ export class User {
 
 export class PublicUserInformation
   implements Pick<User, "username" | "avatarUrl" | "_id"> {
-  @ApiProperty()
+  @ApiProperty({ example: "75442486-0878-440c-9db1-a7006c25a39f" })
   _id!: string;
-  @ApiProperty()
+  @ApiProperty({ example: "sorikairox" })
   username!: string;
-  @ApiProperty()
-  avatarUrl?: string | undefined;
+  @ApiProperty({ example: "http://placekitten.com/200/300" })
+  avatarUrl?: string;
 }

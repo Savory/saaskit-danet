@@ -2,12 +2,13 @@ import { IsString, IsUrl } from "danet/validation.ts";
 import { ApiProperty } from "danet_swagger/decorators.ts";
 
 export class Item {
-  @ApiProperty()
+  @ApiProperty({ example: "75442486-0878-440c-9db1-a7006c25a39f" })
   readonly _id = crypto.randomUUID();
 
-  @ApiProperty()
+  @ApiProperty({ example: "Danet is out !" })
   public title: string;
 
+  @ApiProperty({ example: "https://docs.danet.land" })
   @IsString()
   @IsUrl()
   url: string;
@@ -16,9 +17,9 @@ export class Item {
   userId: string;
   @ApiProperty()
   createdAt: Date;
-  @ApiProperty()
+  @ApiProperty({ example: 99 })
   score: number;
-  @ApiProperty()
+  @ApiProperty({ example: true })
   userHasVoted?: boolean;
 
   constructor(
