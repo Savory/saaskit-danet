@@ -34,7 +34,6 @@ export const handler: Handlers<HomePageData, State> = {
   async GET(_req, ctx) {
     /** @todo Add pagination functionality */
     const items = await getAllItems(ctx.state.accessToken);
-    console.log(items);
     const users = await getUsersByIds(items.map((item) => item.userId));
     return ctx.render({ ...ctx.state, items, users });
   },
