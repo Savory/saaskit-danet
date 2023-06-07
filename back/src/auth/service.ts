@@ -10,6 +10,7 @@ import { CreateUser, Oauth2Provider } from "./class.ts";
 @Injectable()
 export class AuthService implements OnAppBootstrap {
   private key!: CryptoKey;
+  private isRunningInDenoDeploy = (globalThis as any).Worker === undefined;
 
   constructor(
     @Inject(USER_REPOSITORY) private userRepository: UserRepository,
@@ -55,7 +56,9 @@ export class AuthService implements OnAppBootstrap {
       if (!isRegex(password, /^(?=.*[A-Za-z])(?=.*\d).{12,}$/)) {
         throw new Error("PasswordUnsafe");
       }
-      password = await bcrypt.hash(password);
+      password = this.isRunningInDenoDeploy
+        ? await bcrypt.hashSync(password)
+        : await bcrypt.hash(password);
     }
     const userWithSameEmail = await this.userRepository.getByEmail(email);
     if (userWithSameEmail) throw new Error("UserWithEmailAlreadyExist");
@@ -74,7 +77,11 @@ export class AuthService implements OnAppBootstrap {
     if (!user) {
       throw new Error("UserDoesNotExist");
     }
-    if (!(await bcrypt.compare(password, user.password!))) {
+    if (
+      !(this.isRunningInDenoDeploy
+        ? await bcrypt.compareSync(password, user.password!)
+        : await bcrypt.compare(password, user.password!))
+    ) {
       throw new Error("InvalidPassword");
     }
     return this.generateUserToken({
