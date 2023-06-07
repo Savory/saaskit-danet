@@ -5,13 +5,8 @@ import { OnAppBootstrap } from "danet/src/hook/interfaces.ts";
 import { USER_REPOSITORY, type UserRepository } from "../user/repository.ts";
 import { isRegex } from "validatte/mod.ts";
 import * as bcrypt from "bcrypt/mod.ts";
-export type Oauth2Provider = "google" | "discord" | "local";
-export interface CreateUser {
-  email: string;
-  username: string;
-  provider: Oauth2Provider;
-  password?: string;
-}
+import { CreateUser } from "./class.ts";
+
 
 @Injectable()
 export class AuthService implements OnAppBootstrap {

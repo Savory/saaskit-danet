@@ -9,19 +9,39 @@ import { REDIRECT_PATH_AFTER_LOGIN } from "@/utils/constants.ts";
 import type { State } from "./_middleware.ts";
 import { BUTTON_STYLES, INPUT_STYLES } from "@/utils/constants.ts";
 import { redirect } from "@/utils/http.ts";
+import { setCookie } from "https://deno.land/std@0.188.0/http/cookie.ts";
 // deno-lint-ignore no-explicit-any
 export const handler: Handlers<any, State> = {
   async POST(req, ctx) {
     const form = await req.formData();
-    const displayName = form.get("display_name") as string;
+    const username = form.get("username") as string;
     const email = form.get("email") as string;
     const password = form.get("password") as string;
 
     //TODO Call Danet
+    const loginResponse = await fetch(
+      `${Deno.env.get("API_URL")}/auth/register`,
+      {
+        method: "POST",
+        body: JSON.stringify({ email, password, username }),
+      },
+    );
+    if (loginResponse.status !== 200) {
+      return ctx.render();
+    }
+    const token = await loginResponse.text();
     const redirectUrl = new URL(req.url).searchParams.get("redirect_url") ??
       REDIRECT_PATH_AFTER_LOGIN;
+    const response = redirect(redirectUrl);
 
-    return redirect(redirectUrl);
+    setCookie(response.headers, {
+      name: "ACCESS_TOKEN",
+      value: token,
+      sameSite: "Lax",
+      httpOnly: false,
+      path: "/",
+    });
+    return response;
   },
 };
 
@@ -56,8 +76,8 @@ export default function SignupPage(props: PageProps) {
             class="space-y-4"
           >
             <input
-              placeholder="Display name"
-              name="display_name"
+              placeholder="Username"
+              name="username"
               type="text"
               required
               class={INPUT_STYLES}
@@ -82,8 +102,10 @@ export default function SignupPage(props: PageProps) {
           </form>
           <hr class="my-4" />
           <OAuthLoginButton
-            provider="github"
-            disabled={props.url.hostname === "localhost"}
+            provider="discord"
+            disabled={false}
+            redirectUrl={props.url.protocol + "//" + props.url.host +
+              "/login/success"}
           >
             <img
               src="/github-mark.svg"

@@ -8,7 +8,7 @@ import { REDIRECT_PATH_AFTER_LOGIN } from "@/utils/constants.ts";
 import type { State } from "@/routes/_middleware.ts";
 import { BUTTON_STYLES, INPUT_STYLES } from "@/utils/constants.ts";
 import { redirect } from "@/utils/http.ts";
-import { deleteCookie } from "std/http/cookie.ts";
+import { deleteCookie, setCookie } from "std/http/cookie.ts";
 
 // deno-lint-ignore no-explicit-any
 export const handler: Handlers<any, State> = {
@@ -28,9 +28,25 @@ export const handler: Handlers<any, State> = {
     const form = await req.formData();
     const email = form.get("email") as string;
     const password = form.get("password") as string;
-    let redirectUrl = new URL(req.url).searchParams.get("redirect_url") ?? "";
-    //TODO Call Danet API
-    return redirect(redirectUrl);
+    let redirectUrl = new URL(req.url).searchParams.get("redirect_url") ?? "/";
+    const apiResponse = await fetch(`${Deno.env.get("API_URL")}/auth/login`, {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    });
+    if (apiResponse.status !== 200) {
+      console.log(await apiResponse.json());
+      return ctx.render();
+    }
+    const response = redirect(redirectUrl);
+    const token = await apiResponse.text();
+    setCookie(response.headers, {
+      name: "ACCESS_TOKEN",
+      value: token,
+      sameSite: "Lax",
+      httpOnly: false,
+      path: "/",
+    });
+    return response;
   },
 };
 
