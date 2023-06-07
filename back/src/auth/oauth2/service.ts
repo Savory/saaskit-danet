@@ -17,7 +17,7 @@ export class OAuth2Service {
         clientSecret: Deno.env.get("GOOGLE_CLIENT_SECRET")!,
         authorizationEndpointUri: "https://accounts.google.com/o/oauth2/auth",
         tokenUri: "https://accounts.google.com/o/oauth2/token",
-        redirectUri: "http://localhost:3000/oauth2/callback",
+        redirectUri: `${Deno.env.get("HOSTNAME")}/oauth2/callback`,
         defaults: {
           scope: [
             "https://www.googleapis.com/auth/userinfo.email",
@@ -33,7 +33,7 @@ export class OAuth2Service {
         clientSecret: Deno.env.get("DISCORD_CLIENT_SECRET")!,
         authorizationEndpointUri: "https://discord.com/oauth2/authorize",
         tokenUri: "https://discord.com/api/oauth2/token",
-        redirectUri: "http://localhost:3000/oauth2/callback",
+        redirectUri: `${Deno.env.get("HOSTNAME")}/oauth2/callback`,
         defaults: {
           scope: [
             "email",
