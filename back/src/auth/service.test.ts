@@ -18,7 +18,6 @@ describe("Auth Service", () => {
   const userRepo = new InMemoryUserRepository();
   const authService = new AuthService(userRepo);
   beforeAll(async () => {
-    console.log("beforeall");
     Deno.env.set("JWT_SECRET", "MYENV");
     await authService.onAppBootstrap();
   });

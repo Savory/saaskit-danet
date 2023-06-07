@@ -34,7 +34,6 @@ export const handler: Handlers<any, State> = {
       body: JSON.stringify({ email, password }),
     });
     if (apiResponse.status !== 200) {
-      console.log(await apiResponse.json());
       return ctx.render();
     }
     const response = redirect(redirectUrl);
