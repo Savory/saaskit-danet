@@ -1,6 +1,7 @@
 import { Injectable } from "danet/mod.ts";
 import { OAuth2Client } from "oauth2_client/mod.ts";
 import { AuthService } from "../service.ts";
+import { Oauth2Provider } from "../class.ts";
 
 @Injectable()
 export class OAuth2Service {
@@ -46,7 +47,7 @@ export class OAuth2Service {
   async registerOrLoginUser(
     url: string,
     codeVerifier: string,
-    provider = "google",
+    provider: Oauth2Provider = "google",
   ) {
     const tokens = await this.getTokens(
       url,

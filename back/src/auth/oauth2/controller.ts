@@ -15,6 +15,7 @@ import { UserService } from "../../user/service.ts";
 import { Tag } from "danet_swagger/decorators.ts";
 import { AuthService } from "../service.ts";
 import { redirect } from "../../../../front/utils/http.ts";
+import { Oauth2Provider } from "../class.ts";
 
 @Tag("oauth2")
 @Controller("oauth2")
@@ -49,7 +50,7 @@ export class OAuth2Controller {
     // Make sure the codeVerifier is present for the user's session
     const codeVerifier = session.get("codeVerifier");
     const redirectUrl = session.get("redirectUrl");
-    const provider: string = session.get("provider") as string;
+    const provider: Oauth2Provider = session.get("provider") as Oauth2Provider;
     if (typeof codeVerifier !== "string") {
       throw new Error("invalid codeVerifier");
     }
