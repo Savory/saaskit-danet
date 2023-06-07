@@ -27,6 +27,7 @@ export const handler: Handlers<any, State> = {
       },
     );
     if (loginResponse.status !== 200) {
+      console.log(await loginResponse.text());
       return ctx.render();
     }
     const token = await loginResponse.text();
