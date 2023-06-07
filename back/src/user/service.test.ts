@@ -1,22 +1,9 @@
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "std/testing/bdd.ts";
-import {
-  assertEquals,
-  assertExists,
-  assertRejects,
-  assertThrows,
-} from "std/testing/asserts.ts";
+import { afterEach, beforeEach, describe, it } from "std/testing/bdd.ts";
+import { assertEquals, assertRejects } from "std/testing/asserts.ts";
 import { UserService } from "./service.ts";
 import { InMemoryUserRepository } from "./repository.memory.ts";
 import { User } from "./class.ts";
 
-const userId = "hardcodeduser";
 describe("user service", () => {
   const inMemoryUserRepository = new InMemoryUserRepository();
   const userService = new UserService(inMemoryUserRepository);

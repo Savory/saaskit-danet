@@ -63,6 +63,7 @@ export class OAuth2Service {
     return this.authService.registerOrLoginOAuth2(
       externalUserData.email,
       externalUserData.username,
+      provider,
     );
   }
 
