@@ -1,8 +1,6 @@
 // Copyright 2023 the Deno authors. All rights reserved. MIT license.
 import { stripe } from "./payments.ts";
 
-export const kv = await Deno.openKv();
-
 interface InitItem {
   title: string;
   url: string;
