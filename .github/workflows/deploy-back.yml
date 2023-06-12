@@ -10,6 +10,10 @@ defaults:
   run:
     working-directory: back
 
+permissions:
+  contents: read
+  id-token: write # Needed for auth with Deno Deploy
+
 jobs:
   ci:
     runs-on: ${{ matrix.os }}
