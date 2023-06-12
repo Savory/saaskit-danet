@@ -1,5 +1,5 @@
-import { IsEmail, IsString } from "danet/validation.ts";
-export type Oauth2Provider = "google" | "discord" | "local";
+import { IsEmail, IsString } from 'danet/validation.ts';
+export type Oauth2Provider = 'google' | 'discord' | 'local';
 
 export class UpdateAccountDTO {
   @IsString()

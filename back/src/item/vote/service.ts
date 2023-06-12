@@ -1,8 +1,8 @@
-import { Inject, Injectable } from "danet/mod.ts";
-import { Vote } from "./class.ts";
-import { VOTE_REPOSITORY } from "./constant.ts";
-import type { VoteRepository } from "./repository.ts";
-import { ActualUserService } from "../../auth/actual-user.service.ts";
+import { Inject, Injectable } from 'danet/mod.ts';
+import { Vote } from './class.ts';
+import { VOTE_REPOSITORY } from './constant.ts';
+import type { VoteRepository } from './repository.ts';
+import { ActualUserService } from '../../auth/actual-user.service.ts';
 
 @Injectable()
 export class VoteService {
@@ -18,7 +18,7 @@ export class VoteService {
       user._id,
     );
     if (userVoteOnitem) {
-      throw new Error("userAlreadyVoted");
+      throw new Error('userAlreadyVoted');
     }
     return this.repository.create(
       new Vote(itemId, user._id, new Date()),
@@ -37,7 +37,7 @@ export class VoteService {
         itemId,
         user._id,
       ));
-    } catch (e) {
+    } catch (_e) {
       // user not connected
     }
     return userVoteOnitem;
@@ -50,7 +50,7 @@ export class VoteService {
       user._id,
     );
     if (!userVoteOnitem) {
-      throw new Error("userDidNotUpvote");
+      throw new Error('userDidNotUpvote');
     }
     return this.repository.deleteOne(userVoteOnitem._id);
   }

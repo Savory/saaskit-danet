@@ -1,15 +1,15 @@
-import { afterEach, beforeEach, describe, it } from "std/testing/bdd.ts";
-import { assertEquals, assertRejects } from "std/testing/asserts.ts";
-import { UserService } from "./service.ts";
-import { InMemoryUserRepository } from "./repository.memory.ts";
-import { User } from "./class.ts";
+import { afterEach, beforeEach, describe, it } from 'std/testing/bdd.ts';
+import { assertEquals, assertRejects } from 'std/testing/asserts.ts';
+import { UserService } from './service.ts';
+import { InMemoryUserRepository } from './repository.memory.ts';
+import { User } from './class.ts';
 
-describe("user service", () => {
+describe('user service', () => {
   const inMemoryUserRepository = new InMemoryUserRepository();
   const userService = new UserService(inMemoryUserRepository);
   const users = [
-    new User("toto@toto.com", "toto"),
-    new User("titi@titi.com", "titi"),
+    new User('toto@toto.com', 'toto'),
+    new User('titi@titi.com', 'titi'),
   ];
   beforeEach(async () => {
     for (const user of users) {
@@ -22,7 +22,7 @@ describe("user service", () => {
   });
 
   describe(userService.getUserPublicInformation.name, () => {
-    it("get user public information if exist", async () => {
+    it('get user public information if exist', async () => {
       const user = await userService.getUserPublicInformation(users[0]._id);
       assertEquals(user, {
         username: users[0].username,
@@ -30,16 +30,16 @@ describe("user service", () => {
         _id: users[0]._id,
       });
     });
-    it("throw if does not exist", async () => {
-      await assertRejects(() => userService.getUserPublicInformation("nop"));
+    it('throw if does not exist', async () => {
+      await assertRejects(() => userService.getUserPublicInformation('nop'));
     });
   });
 
   describe(userService.getMultipleUserPublicInformation.name, () => {
-    it("get users public information if they exist", async () => {
+    it('get users public information if they exist', async () => {
       const user = await userService.getMultipleUserPublicInformation([
         users[0]._id,
-        "nonexisting",
+        'nonexisting',
         users[1]._id,
       ]);
       assertEquals(user, [{

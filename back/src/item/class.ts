@@ -1,14 +1,14 @@
-import { IsString, IsUrl } from "danet/validation.ts";
-import { ApiProperty } from "danet_swagger/decorators.ts";
+import { IsString, IsUrl } from 'danet/validation.ts';
+import { ApiProperty } from 'danet_swagger/decorators.ts';
 
 export class Item {
-  @ApiProperty({ example: "75442486-0878-440c-9db1-a7006c25a39f" })
+  @ApiProperty({ example: '75442486-0878-440c-9db1-a7006c25a39f' })
   readonly _id = crypto.randomUUID();
 
-  @ApiProperty({ example: "Danet is out !" })
+  @ApiProperty({ example: 'Danet is out !' })
   public title: string;
 
-  @ApiProperty({ example: "https://docs.danet.land" })
+  @ApiProperty({ example: 'https://docs.danet.land' })
   @IsString()
   @IsUrl()
   url: string;
@@ -36,7 +36,7 @@ export class Item {
   }
 }
 
-export class CreateItemDTO implements Pick<Item, "title" | "url"> {
+export class CreateItemDTO implements Pick<Item, 'title' | 'url'> {
   @IsString()
   public title!: string;
 

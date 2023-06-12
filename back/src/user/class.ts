@@ -1,15 +1,15 @@
-import { ApiProperty } from "danet_swagger/decorators.ts";
+import { ApiProperty } from 'danet_swagger/decorators.ts';
 
 export class User {
-  @ApiProperty({ example: "75442486-0878-440c-9db1-a7006c25a39f" })
+  @ApiProperty({ example: '75442486-0878-440c-9db1-a7006c25a39f' })
   readonly _id = crypto.randomUUID();
 
-  @ApiProperty({ example: "my email" })
+  @ApiProperty({ example: 'my email' })
   email: string;
 
-  @ApiProperty({ example: "sorikairox" })
+  @ApiProperty({ example: 'sorikairox' })
   username: string;
-  @ApiProperty({ example: "http://placekitten.com/200/300" })
+  @ApiProperty({ example: 'http://placekitten.com/200/300' })
   avatarUrl?: string;
   @ApiProperty()
   isSubscribed?: boolean;
@@ -24,11 +24,11 @@ export class User {
 }
 
 export class PublicUserInformation
-  implements Pick<User, "username" | "avatarUrl" | "_id"> {
-  @ApiProperty({ example: "75442486-0878-440c-9db1-a7006c25a39f" })
+  implements Pick<User, 'username' | 'avatarUrl' | '_id'> {
+  @ApiProperty({ example: '75442486-0878-440c-9db1-a7006c25a39f' })
   _id!: string;
-  @ApiProperty({ example: "sorikairox" })
+  @ApiProperty({ example: 'sorikairox' })
   username!: string;
-  @ApiProperty({ example: "http://placekitten.com/200/300" })
+  @ApiProperty({ example: 'http://placekitten.com/200/300' })
   avatarUrl?: string;
 }

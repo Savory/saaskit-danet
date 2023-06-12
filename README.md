@@ -1,16 +1,14 @@
-# Deno SaaSKit
+<p align="center">
+   <img src="https://user-images.githubusercontent.com/38007824/205580360-fa032554-5e9e-4266-8ec9-c78ca9a233bc.svg" width="250" alt="Danet Logo" />
+</p>
 
-> Warning: this project is in beta. Design, workflows, and user accounts are
-> subject to change.
+## Description
 
-[![Discord Chat](https://img.shields.io/discord/684898665143206084?logo=discord&style=social)](https://discord.gg/deno)
-
-[Deno SaaSKit](https://deno.com/saaskit) is an open-sourced, highly performant
-template for building your SaaS quickly and easily.
+A [Deno SaaSKit](https://deno.com/saaskit) fork using [Danet](https://github.com/savory/danet) framework for the API.
 
 ## Features
 
-- [No build step](https://deno.com/blog/you-dont-need-a-build-step#non-building-with-deno-and-fresh)
+- Freh's frontend with no [No build step](https://deno.com/blog/you-dont-need-a-build-step#non-building-with-deno-and-fresh)
 - Deno's built-in [formatter](https://deno.land/manual/tools/formatter),
   [linter](https://deno.land/manual/tools/linter) and
   [test runner](https://deno.land/manual/basics/testing) and TypeScript support.

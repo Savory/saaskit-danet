@@ -1,5 +1,5 @@
-import { AuthGuard, ExecutionContext, Injectable } from "danet/mod.ts";
-import { AuthService } from "./service.ts";
+import { AuthGuard, ExecutionContext, Injectable } from 'danet/mod.ts';
+import { AuthService } from './service.ts';
 
 @Injectable()
 export class UserConnected implements AuthGuard {
@@ -7,11 +7,11 @@ export class UserConnected implements AuthGuard {
   async canActivate(
     context: ExecutionContext,
   ): Promise<boolean> {
-    const bearerToken = context.request.headers.get("authorization");
+    const bearerToken = context.request.headers.get('authorization');
     if (!bearerToken) {
       return false;
     }
-    const [_, token] = bearerToken.split(" ");
+    const [_, token] = bearerToken.split(' ');
     if (!token) {
       return false;
     }
@@ -31,7 +31,7 @@ export class UserMayBeConnected extends UserConnected {
   ): Promise<boolean> {
     try {
       await super.canActivate(context);
-    } catch (e) {
+    } catch (_e) {
       // user not connected but we don't care
     }
     return true;

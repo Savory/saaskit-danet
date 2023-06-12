@@ -1,16 +1,16 @@
-import { ApiProperty } from "danet_swagger/decorators.ts";
-import { IsString } from "validatte/mod.ts";
+import { ApiProperty } from 'danet_swagger/decorators.ts';
+import { IsString } from 'validatte/mod.ts';
 
 export class Comment {
-  @ApiProperty({ example: "75442486-0878-440c-9db1-a7006c25a39f" })
+  @ApiProperty({ example: '75442486-0878-440c-9db1-a7006c25a39f' })
   readonly _id: string = crypto.randomUUID();
   @ApiProperty()
   createdAt: Date;
-  @ApiProperty({ example: "75442486-0878-440c-9db1-a7006c25a39f" })
+  @ApiProperty({ example: '75442486-0878-440c-9db1-a7006c25a39f' })
   userId: string;
-  @ApiProperty({ example: "75442486-0878-440c-9db1-a7006c25a39f" })
+  @ApiProperty({ example: '75442486-0878-440c-9db1-a7006c25a39f' })
   itemId: string;
-  @ApiProperty({ example: "Danet is awesome omg xoxo /s" })
+  @ApiProperty({ example: 'Danet is awesome omg xoxo /s' })
   text: string;
 
   constructor(
@@ -26,8 +26,8 @@ export class Comment {
   }
 }
 
-export class CreateCommentDTO implements Omit<Comment, "_id" | "createdAt"> {
-  @ApiProperty({ example: "Yeah sure..." })
+export class CreateCommentDTO implements Omit<Comment, '_id' | 'createdAt'> {
+  @ApiProperty({ example: 'Yeah sure...' })
   @IsString()
   text!: string;
   userId!: string;

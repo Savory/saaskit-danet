@@ -1,6 +1,6 @@
-import { Inject, Injectable, NotFoundException } from "danet/mod.ts";
-import { USER_REPOSITORY, type UserRepository } from "./repository.ts";
-import { PublicUserInformation, User } from "./class.ts";
+import { Inject, Injectable, NotFoundException } from 'danet/mod.ts';
+import { USER_REPOSITORY, type UserRepository } from './repository.ts';
+import { PublicUserInformation } from './class.ts';
 
 @Injectable()
 export class UserService {

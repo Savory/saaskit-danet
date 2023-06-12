@@ -1,4 +1,4 @@
-import { ApiProperty } from "danet_swagger/decorators.ts";
+import { ApiProperty } from 'danet_swagger/decorators.ts';
 
 export class Vote {
   @ApiProperty()

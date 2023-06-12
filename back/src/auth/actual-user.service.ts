@@ -1,8 +1,8 @@
-import { HttpContext, Inject, Injectable, SCOPE } from "danet/mod.ts";
-import { User } from "../user/class.ts";
-import { BeforeControllerMethodIsCalled } from "danet/src/hook/interfaces.ts";
-import { USER_REPOSITORY, type UserRepository } from "../user/repository.ts";
-import { UpdateAccountDTO } from "./class.ts";
+import { HttpContext, Inject, Injectable, SCOPE } from 'danet/mod.ts';
+import { User } from '../user/class.ts';
+import { BeforeControllerMethodIsCalled } from 'danet/src/hook/interfaces.ts';
+import { USER_REPOSITORY, type UserRepository } from '../user/repository.ts';
+import { UpdateAccountDTO } from './class.ts';
 
 @Injectable({ scope: SCOPE.REQUEST })
 export class ActualUserService implements BeforeControllerMethodIsCalled {
@@ -16,7 +16,7 @@ export class ActualUserService implements BeforeControllerMethodIsCalled {
     if (this.actualUser) {
       return this.actualUser;
     }
-    throw "User not connected";
+    throw 'User not connected';
   }
 
   async updateInfo(data: UpdateAccountDTO) {

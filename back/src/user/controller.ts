@@ -1,37 +1,24 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  Query,
-  UseGuard,
-} from "danet/mod.ts";
-import { ReturnedType, Tag } from "danet_swagger/decorators.ts";
-import { UserConnected } from "../auth/guard.ts";
-import { CreateItemDTO, Item, UpvoteCount } from "../item/class.ts";
-import { CreateCommentDTO } from "../item/comment/class.ts";
-import { UserService } from "./service.ts";
-import { PublicUserInformation } from "./class.ts";
+import { Controller, Get, Param, Query } from 'danet/mod.ts';
+import { ReturnedType, Tag } from 'danet_swagger/decorators.ts';
+import { UserService } from './service.ts';
+import { PublicUserInformation } from './class.ts';
 
-@Controller("user")
+@Controller('user')
 export class UserController {
   constructor(public userService: UserService) {
   }
 
-  @Tag("user")
+  @Tag('user')
   @ReturnedType(PublicUserInformation)
-  @Get(":id")
-  async getUserById(@Param("id") userId: string) {
+  @Get(':id')
+  async getUserById(@Param('id') userId: string) {
     return this.userService.getUserPublicInformation(userId);
   }
 
-  @Tag("user")
+  @Tag('user')
   @ReturnedType(PublicUserInformation, true)
   @Get()
-  async getUsers(@Query("id", { value: "array" }) ids: string[]) {
+  async getUsers(@Query('id', { value: 'array' }) ids: string[]) {
     return this.userService.getMultipleUserPublicInformation(ids);
   }
 }

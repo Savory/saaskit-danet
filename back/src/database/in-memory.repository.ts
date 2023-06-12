@@ -1,4 +1,4 @@
-import { Repository } from "../database/repository.ts";
+import { Repository } from '../database/repository.ts';
 
 export class InMemoryRepository<T extends { _id: string }>
   implements Repository<T> {

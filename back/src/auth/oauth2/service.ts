@@ -1,43 +1,43 @@
-import { Injectable } from "danet/mod.ts";
-import { OAuth2Client } from "oauth2_client/mod.ts";
-import { AuthService } from "../service.ts";
-import { Oauth2Provider } from "../class.ts";
+import { Injectable } from 'danet/mod.ts';
+import { OAuth2Client } from 'oauth2_client/mod.ts';
+import { AuthService } from '../service.ts';
+import { Oauth2Provider } from '../class.ts';
 
 @Injectable()
 export class OAuth2Service {
-  private clients = new Map<String, OAuth2Client>();
+  private clients = new Map<string, OAuth2Client>();
 
   constructor(
     private authService: AuthService,
   ) {
     this.clients.set(
-      "google",
+      'google',
       new OAuth2Client({
-        clientId: Deno.env.get("GOOGLE_CLIENT_ID")!,
-        clientSecret: Deno.env.get("GOOGLE_CLIENT_SECRET")!,
-        authorizationEndpointUri: "https://accounts.google.com/o/oauth2/auth",
-        tokenUri: "https://accounts.google.com/o/oauth2/token",
-        redirectUri: `${Deno.env.get("HOSTNAME")}/oauth2/callback`,
+        clientId: Deno.env.get('GOOGLE_CLIENT_ID')!,
+        clientSecret: Deno.env.get('GOOGLE_CLIENT_SECRET')!,
+        authorizationEndpointUri: 'https://accounts.google.com/o/oauth2/auth',
+        tokenUri: 'https://accounts.google.com/o/oauth2/token',
+        redirectUri: `${Deno.env.get('HOSTNAME')}/oauth2/callback`,
         defaults: {
           scope: [
-            "https://www.googleapis.com/auth/userinfo.email",
-            "https://www.googleapis.com/auth/userinfo.profile",
+            'https://www.googleapis.com/auth/userinfo.email',
+            'https://www.googleapis.com/auth/userinfo.profile',
           ],
         },
       }),
     );
     this.clients.set(
-      "discord",
+      'discord',
       new OAuth2Client({
-        clientId: Deno.env.get("DISCORD_CLIENT_ID")!,
-        clientSecret: Deno.env.get("DISCORD_CLIENT_SECRET")!,
-        authorizationEndpointUri: "https://discord.com/oauth2/authorize",
-        tokenUri: "https://discord.com/api/oauth2/token",
-        redirectUri: `${Deno.env.get("HOSTNAME")}/oauth2/callback`,
+        clientId: Deno.env.get('DISCORD_CLIENT_ID')!,
+        clientSecret: Deno.env.get('DISCORD_CLIENT_SECRET')!,
+        authorizationEndpointUri: 'https://discord.com/oauth2/authorize',
+        tokenUri: 'https://discord.com/api/oauth2/token',
+        redirectUri: `${Deno.env.get('HOSTNAME')}/oauth2/callback`,
         defaults: {
           scope: [
-            "email",
-            "identify",
+            'email',
+            'identify',
           ],
         },
       }),
@@ -47,7 +47,7 @@ export class OAuth2Service {
   async registerOrLoginUser(
     url: string,
     codeVerifier: string,
-    provider: Oauth2Provider = "google",
+    provider: Oauth2Provider = 'google',
   ) {
     const tokens = await this.getTokens(
       url,
@@ -59,7 +59,7 @@ export class OAuth2Service {
       provider,
     );
     if (!externalUserData) {
-      throw new Error("Cannot get user info from provider" + provider);
+      throw new Error('Cannot get user info from provider' + provider);
     }
     return this.authService.registerOrLoginOAuth2(
       externalUserData.email,
@@ -80,9 +80,9 @@ export class OAuth2Service {
   }
 
   async getUser(accessToken: string, provider: string) {
-    if (provider === "google") {
+    if (provider === 'google') {
       const userResponse = await fetch(
-        "https://www.googleapis.com/oauth2/v3/userinfo",
+        'https://www.googleapis.com/oauth2/v3/userinfo',
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -91,9 +91,9 @@ export class OAuth2Service {
       );
       const user = await userResponse.json();
       return { email: user.email, username: user.name };
-    } else if (provider === "discord") {
+    } else if (provider === 'discord') {
       const userResponse = await fetch(
-        "https://discord.com/api/users/@me",
+        'https://discord.com/api/users/@me',
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
