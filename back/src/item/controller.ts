@@ -12,7 +12,6 @@ import { CreateItemDTO, Item, UpvoteCount } from "./class.ts";
 import { Comment, CreateCommentDTO } from "./comment/class.ts";
 import { ItemService } from "./service.ts";
 import { ReturnedType, Tag, TAGS_KEY } from "danet_swagger/decorators.ts";
-import { ParameterDeclarationBase } from "https://deno.land/x/ts_morph@17.0.1/ts_morph.js";
 import { UserConnected, UserMayBeConnected } from "../auth/guard.ts";
 
 @Controller("item")

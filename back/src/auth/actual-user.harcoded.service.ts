@@ -1,6 +1,5 @@
 import { Injectable, SCOPE } from "danet/mod.ts";
 import { User } from "../user/class.ts";
-import { HttpContext } from "https://deno.land/x/danet@1.7.4/src/router/router.ts";
 import { UpdateAccountDTO } from "./class.ts";
 
 @Injectable({ scope: SCOPE.REQUEST })
