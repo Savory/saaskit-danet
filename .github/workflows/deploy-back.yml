@@ -6,6 +6,9 @@ on:
     paths:
       - 'back/**/*'
       - '.github/workflows/deploy-back.yml' 
+defaults:
+  run:
+    working-directory: back
 
 jobs:
   ci:
