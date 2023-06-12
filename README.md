@@ -28,3 +28,4 @@ A [Deno SaaSKit](https://deno.com/saaskit) fork using
 - KV, MongoDB, Postgres Adapters. Simply chose one or the other via an
   environment variable
 - CI/CD to deploy back+front on Deno Deploy
+- Subscription feature
