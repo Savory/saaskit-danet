@@ -44,4 +44,4 @@ jobs:
         with:
           project: saaskit-api
           entrypoint: run.js
-          root: bundle
+          root: back/bundle
