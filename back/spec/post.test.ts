@@ -1,34 +1,46 @@
-import { bootstrap } from '../src/bootstrap.ts';
+import { bootstrap } from "../src/bootstrap.ts";
 import {
   afterAll,
   afterEach,
   beforeAll,
   describe,
   it,
-} from 'std/testing/bdd.ts';
-import { assertEquals, assertExists } from 'std/testing/asserts.ts';
-import { DanetApplication } from 'danet/mod.ts';
-import { ItemService } from '../src/item/service.ts';
-import { Item } from '../src/item/class.ts';
-import { Comment } from '../src/item/comment/class.ts';
-import { Repository } from '../src/database/repository.ts';
-import { COMMENT_REPOSITORY } from '../src/item/comment/constant.ts';
+} from "std/testing/bdd.ts";
+import { assertEquals, assertExists } from "std/testing/asserts.ts";
+import { DanetApplication } from "danet/mod.ts";
+import { ItemService } from "../src/item/service.ts";
+import { Item } from "../src/item/class.ts";
+import { Comment } from "../src/item/comment/class.ts";
+import { Repository } from "../src/database/repository.ts";
+import { COMMENT_REPOSITORY } from "../src/item/comment/constant.ts";
+import { AuthService } from "../src/auth/service.ts";
 
 let app: DanetApplication;
 let server;
 let postService: ItemService;
+let authService: AuthService;
 let port: number;
 let apiUrl: string;
-const payload: Omit<Item, '_id' | 'createdAt' | 'userId' | 'score'> = {
-  title: 'my todo',
-  url: 'https://www.google.com',
+let token: string;
+const payload: Omit<Item, "_id" | "createdAt" | "userId" | "score"> = {
+  title: "my todo",
+  url: "https://www.google.com",
 };
 
-describe('Item', () => {
+describe("Item", () => {
   beforeAll(async () => {
     app = await bootstrap();
     server = await app.listen(0);
     postService = await app.get<ItemService>(ItemService);
+    authService = await app.get<AuthService>(AuthService);
+
+    token = await authService.registerUser({
+      username: "myusername",
+      password: "MySafePassword0123",
+      email: "myfakeemail@test.com",
+      provider: "local",
+    });
+
     port = server.port;
     apiUrl = `http://localhost:${port}`;
     // we need this to make oak listen outside of any test to not leak
@@ -44,9 +56,12 @@ describe('Item', () => {
     await postService.deleteAll();
   });
 
-  it('create item', async () => {
+  it("create item", async () => {
     const res = await fetch(`${apiUrl}/item`, {
-      method: 'POST',
+      method: "POST",
+      headers: {
+        authorization: "Bearer " + token,
+      },
       body: JSON.stringify(payload),
     });
     const returnedData: Item = await res.json();
@@ -56,29 +71,41 @@ describe('Item', () => {
     assertEquals(returnedData.url, payload.url);
   });
 
-  it('fails to create item if url is not valid', async () => {
+  it("fails to create item if url is not valid", async () => {
     const res = await fetch(`${apiUrl}/item`, {
-      method: 'POST',
+      method: "POST",
+      headers: {
+        authorization: "Bearer " + token,
+      },
       body: JSON.stringify({
         ...payload,
-        url: 'badurl',
+        url: "badurl",
       }),
     });
     await res.body?.cancel();
     assertEquals(res.status, 400);
   });
 
-  it('get items', async () => {
+  it("get items", async () => {
     (await fetch(`${apiUrl}/item`, {
-      method: 'POST',
+      headers: {
+        authorization: "Bearer " + token,
+      },
+      method: "POST",
       body: JSON.stringify(payload),
     })).body?.cancel();
     (await fetch(`${apiUrl}/item`, {
-      method: 'POST',
+      headers: {
+        authorization: "Bearer " + token,
+      },
+      method: "POST",
       body: JSON.stringify(payload),
     })).body?.cancel();
     (await fetch(`${apiUrl}/item`, {
-      method: 'POST',
+      headers: {
+        authorization: "Bearer " + token,
+      },
+      method: "POST",
       body: JSON.stringify(payload),
     })).body?.cancel();
     const res = await fetch(`${apiUrl}/item`);
@@ -86,9 +113,12 @@ describe('Item', () => {
     assertEquals(items.length, 3);
   });
 
-  it('get items by id', async () => {
+  it("get items by id", async () => {
     const createdPost = await (await fetch(`${apiUrl}/item`, {
-      method: 'POST',
+      headers: {
+        authorization: "Bearer " + token,
+      },
+      method: "POST",
       body: JSON.stringify(payload),
     })).json();
     const post = await (await fetch(`${apiUrl}/item/${createdPost._id}`))
@@ -96,7 +126,7 @@ describe('Item', () => {
     assertEquals(post._id, createdPost._id);
   });
 
-  it('add comment to item', async () => {
+  it("add comment to item", async () => {
     const createdPost = await createPostAndComment();
     const commentRepository = app.get<Repository<Comment>>(COMMENT_REPOSITORY);
     const comments: Comment[] = await commentRepository.getAll();
@@ -104,7 +134,7 @@ describe('Item', () => {
     assertEquals(comments[0].itemId, createdPost._id);
   });
 
-  it('get item comments', async () => {
+  it("get item comments", async () => {
     const createdPost = await createPostAndComment();
     const comments = await (await fetch(
       `${apiUrl}/item/${createdPost._id}/comment`,
@@ -114,46 +144,64 @@ describe('Item', () => {
     assertEquals(comments[0].itemId, createdPost._id);
   });
 
-  it('upvote item and get item upvote count', async () => {
+  it("upvote item and get item upvote count", async () => {
     const createdPost = await createPostAndComment();
     (await fetch(`${apiUrl}/item/${createdPost._id}/upvote`, {
-      method: 'POST',
+      headers: {
+        authorization: "Bearer " + token,
+      },
+      method: "POST",
     }))
       .body?.cancel();
-    const upvoteCount: { count: number; userHasVoted: boolean } =
-      await (await fetch(`${apiUrl}/item/${createdPost._id}/upvote`)).json();
-    assertEquals(upvoteCount.count, 1);
-    assertEquals(upvoteCount.userHasVoted, true);
+    const item: Item = await (await fetch(`${apiUrl}/item/${createdPost._id}`, {
+      headers: {
+        authorization: "Bearer " + token,
+      },
+    })).json();
+    assertEquals(item.score, 1);
+    assertEquals(item.userHasVoted, true);
   });
 
-  it('upvote item, remove upvote, get item upvote count', async () => {
+  it("upvote item, remove upvote, get item upvote count", async () => {
     const createdPost = await createPostAndComment();
     (await fetch(`${apiUrl}/item/${createdPost._id}/upvote`, {
-      method: 'POST',
+      method: "POST",
+      headers: {
+        authorization: "Bearer " + token,
+      },
     }))
       .body?.cancel();
     (await fetch(`${apiUrl}/item/${createdPost._id}/upvote`, {
-      method: 'DELETE',
+      headers: {
+        authorization: "Bearer " + token,
+      },
+      method: "DELETE",
     }))
       .body?.cancel();
-    const upvoteCount: { count: number; userHasVoted: boolean } =
-      await (await fetch(`${apiUrl}/item/${createdPost._id}/upvote`)).json();
-    assertEquals(upvoteCount.count, 0);
-    assertEquals(upvoteCount.userHasVoted, false);
+    const item: Item = await (await fetch(`${apiUrl}/item/${createdPost._id}`))
+      .json();
+    assertEquals(item.score, 0);
+    assertEquals(item.userHasVoted, false);
   });
 });
 
 async function createPostAndComment() {
   const createdPost = await (await fetch(`${apiUrl}/item`, {
-    method: 'POST',
+    headers: {
+      authorization: "Bearer " + token,
+    },
+    method: "POST",
     body: JSON.stringify(payload),
   })).json();
   await (await fetch(
     `${apiUrl}/item/${createdPost._id}/comment`,
     {
-      method: 'POST',
+      method: "POST",
+      headers: {
+        authorization: "Bearer " + token,
+      },
       body: JSON.stringify({
-        text: 'hellow !',
+        text: "hellow !",
       }),
     },
   )).json();
