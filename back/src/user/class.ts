@@ -2,7 +2,7 @@ import { ApiProperty } from 'danet_swagger/decorators.ts';
 
 export class User {
   @ApiProperty({ example: '75442486-0878-440c-9db1-a7006c25a39f' })
-  readonly _id = crypto.randomUUID();
+  readonly _id: string = crypto.randomUUID();
 
   @ApiProperty({ example: 'my email' })
   email: string;

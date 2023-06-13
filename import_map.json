@@ -26,6 +26,8 @@
     "oauth2_client/": "https://deno.land/x/oauth2_client@v1.0.0/",
     "session/": "https://deno.land/x/oak_sessions@v4.0.5/",
     "jwt/": "https://deno.land/x/djwt@v2.8/",
-    "bcrypt/": "https://deno.land/x/bcrypt@v0.4.0/"
+    "bcrypt/": "https://deno.land/x/bcrypt@v0.4.0/",
+    "mongo/": "https://deno.land/x/mongo/",
+    "postgres/": "https://deno.land/x/postgres/"
   }
 }
