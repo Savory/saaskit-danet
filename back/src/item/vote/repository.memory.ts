@@ -1,6 +1,6 @@
-import { InMemoryRepository } from '../../database/in-memory.repository.ts';
-import { Vote } from './class.ts';
-import { type VoteRepository } from './repository.ts';
+import { InMemoryRepository } from "../../database/repository.memory.ts";
+import { Vote } from "./class.ts";
+import { type VoteRepository } from "./repository.ts";
 
 export class InMemoryVoteRepository extends InMemoryRepository<Vote>
   implements VoteRepository {

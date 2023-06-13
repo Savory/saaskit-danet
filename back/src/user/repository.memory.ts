@@ -1,6 +1,6 @@
-import { InMemoryRepository } from '../database/in-memory.repository.ts';
-import { User } from './class.ts';
-import { UserRepository } from './repository.ts';
+import { InMemoryRepository } from "../database/repository.memory.ts";
+import { User } from "./class.ts";
+import { UserRepository } from "./repository.ts";
 
 export class InMemoryUserRepository extends InMemoryRepository<User>
   implements UserRepository {
