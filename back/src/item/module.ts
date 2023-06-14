@@ -12,6 +12,9 @@ import { InMemoryVoteRepository } from "./vote/repository.memory.ts";
 import { MongodbItemRepository } from "./repository.mongodb.ts";
 import { MongodbVoteRepository } from "./vote/repository.mongodb.ts";
 import { MongodbCommentRepository } from "./comment/repository.mongodb.ts";
+import { KvItemRepository } from "./repository.kv.ts";
+import { KvCommentRepository } from "./comment/repository.kv.ts";
+import { KvVoteRepository } from "./vote/repository.kv.ts";
 
 function getRepositoriesForProvider(provider: string | undefined) {
   if (provider === "MONGO") {
@@ -19,6 +22,12 @@ function getRepositoriesForProvider(provider: string | undefined) {
       new TokenInjector(MongodbItemRepository, ITEM_REPOSITORY),
       new TokenInjector(MongodbCommentRepository, COMMENT_REPOSITORY),
       new TokenInjector(MongodbVoteRepository, VOTE_REPOSITORY),
+    ];
+  } else if (provider === "KV") {
+    return [
+      new TokenInjector(KvItemRepository, ITEM_REPOSITORY),
+      new TokenInjector(KvCommentRepository, COMMENT_REPOSITORY),
+      new TokenInjector(KvVoteRepository, VOTE_REPOSITORY),
     ];
   }
   return [

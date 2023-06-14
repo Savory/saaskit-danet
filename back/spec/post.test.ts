@@ -122,6 +122,7 @@ describe("Item", () => {
     })).body?.cancel();
     const res = await fetch(`${apiUrl}/item`);
     const items = await res.json();
+    assertEquals(res.status, 200);
     assertEquals(items.length, 3);
   });
 
@@ -140,8 +141,10 @@ describe("Item", () => {
 
   it("add comment to item", async () => {
     const createdPost = await createPostAndComment();
-    const commentRepository = app.get<Repository<Comment>>(COMMENT_REPOSITORY);
-    const comments: Comment[] = await commentRepository.getAll();
+    const comments = await (await fetch(
+      `${apiUrl}/item/${createdPost._id}/comment`,
+    ))
+      .json();
     assertEquals(comments.length, 1);
     assertEquals(comments[0].itemId, createdPost._id);
   });
