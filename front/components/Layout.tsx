@@ -88,10 +88,6 @@ interface LayoutProps {
 
 export default function Layout(props: LayoutProps) {
   const headerNavItems = [
-    {
-      href: "/pricing",
-      inner: "Pricing",
-    },
     props.actualUser
       ? {
         href: "/account",
@@ -114,7 +110,7 @@ export default function Layout(props: LayoutProps) {
     },
     {
       inner: "Source code",
-      href: "https://github.com/denoland/saaskit",
+      href: "https://github.com/Savory/saaskit-danet",
     },
     {
       href: "https://fresh.deno.dev",

@@ -18,7 +18,6 @@ import {
   getItemUpvoteInfo,
   getUserById,
   getUsersByIds,
-  getVotedItemIdsByUser,
   type Item,
   type User,
 } from "@/utils/db.ts";

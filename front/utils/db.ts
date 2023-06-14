@@ -35,11 +35,6 @@ export async function getAllItems(accessToken?: string) {
   })).json();
 }
 
-export async function deleteAllItems() {
-  const iter = await kv.list<Item>({ prefix: ["items"] });
-  for await (const res of iter) kv.delete(res.key);
-}
-
 export async function getItemById(id: string, accessToken: string) {
   return (await fetch(`${Deno.env.get("API_URL")}/item/${id}`, {
     headers: {
@@ -127,18 +122,6 @@ export async function getItemUpvoteInfo(itemId: string, accessToken: string) {
   )).json();
 }
 
-export async function getVotedItemIdsByUser(
-  userId: string,
-  options?: Deno.KvListOptions,
-) {
-  const iter = await kv.list<undefined>({
-    prefix: ["votes_by_users", userId],
-  }, options);
-  const voteItemIds = [];
-  for await (const res of iter) voteItemIds.push(res.key.at(-1));
-  return voteItemIds;
-}
-
 interface InitUser {
   _id: string;
   stripeCustomerId?: string;
@@ -155,35 +138,6 @@ export async function getUserById(id: string) {
     `${Deno.env.get("API_URL")}/user/${id}`,
   )).json();
 }
-
-export async function getUserByStripeCustomerId(stripeCustomerId: string) {
-  const res = await kv.get<string>([
-    "user_ids_by_stripe_customer",
-    stripeCustomerId,
-  ]);
-  if (!res.value) return null;
-  return await getUserById(res.value);
-}
-
-export async function setUserSubscription(
-  id: string,
-  isSubscribed: boolean,
-) {
-  const key = ["users", id];
-  const userRes = await kv.get<User>(key);
-
-  if (userRes.value === null) throw new Error("User with ID does not exist");
-
-  const res = await kv.atomic()
-    .check(userRes)
-    .set(key, { ...userRes.value, isSubscribed } as User)
-    .commit();
-
-  if (!res.ok) {
-    throw new TypeError("Atomic operation has failed");
-  }
-}
-
 export async function getUsersByIds(ids: string[]) {
   const uniqueIds = [...new Set(ids)];
   return (await fetch(
@@ -191,15 +145,4 @@ export async function getUsersByIds(ids: string[]) {
       uniqueIds.map((s) => ["id", s]),
     )}`,
   )).json();
-}
-export async function getAllUsers(options?: Deno.KvListOptions) {
-  const iter = await kv.list<Item>({ prefix: ["users"] }, options);
-  const items = [];
-  for await (const res of iter) items.push(res.value);
-  return items;
-}
-
-export async function deleteAllUsers() {
-  const iter = await kv.list<Item>({ prefix: ["users"] });
-  for await (const res of iter) kv.delete(res.key);
 }

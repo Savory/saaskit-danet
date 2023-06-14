@@ -9,7 +9,7 @@ A [Deno SaaSKit](https://deno.com/saaskit) fork using
 
 ## Features
 
-- Freh's frontend with
+- Fresh's frontend with
   [No build step](https://deno.com/blog/you-dont-need-a-build-step#non-building-with-deno-and-fresh)
 - Deno's built-in [formatter](https://deno.land/manual/tools/formatter),
   [linter](https://deno.land/manual/tools/linter) and

@@ -8,7 +8,6 @@ import ItemSummary from "@/components/ItemSummary.tsx";
 import {
   getAllItems,
   getUsersByIds,
-  getVotedItemIdsByUser,
   type Item,
   type User,
 } from "@/utils/db.ts";
