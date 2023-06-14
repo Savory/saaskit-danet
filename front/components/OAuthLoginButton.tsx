@@ -12,6 +12,7 @@ interface OAuthLoginButtonProps {
 export default function OAuthLoginButton(props: OAuthLoginButtonProps) {
   return (
     <form
+      class="mt-2"
       action={Deno.env.get("API_URL") + "/oauth2/login/" + props.provider}
     >
       <input type="hidden" value={props.redirectUrl} name="redirecturl" />

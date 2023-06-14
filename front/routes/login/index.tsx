@@ -100,20 +100,35 @@ export default function LoginPage(props: PageProps) {
               "/login/success"}
           >
             <img
-              src="/github-mark.svg"
-              alt="GitHub logo"
+              src="/discord-mark-blue.svg"
+              alt="discord logo"
               class="inline mr-2 h-5 w-5 align-text-top"
             />
             Login with Discord
           </OAuthLoginButton>
-          <div class="text-center text-gray-500 space-y-2 mt-8">
+          <OAuthLoginButton
+            provider="google"
+            disabled={false}
+            redirectUrl={props.url.protocol + "//" + props.url.host +
+              "/login/success"}
+          >
+            <img
+              src="/g-logo.png"
+              alt="Google logo"
+              class="inline mr-2 h-5 w-5 align-text-top"
+            />
+            Login with Google
+          </OAuthLoginButton>
+          {
+            /* <div class="text-center text-gray-500 space-y-2 mt-8">
             <p class="hover:text-black">
               <a href="/signup">Don't have an account? Sign up</a>
             </p>
             <p class="hover:text-black">
               <a href="/forgot-password">Forgot your password?</a>
             </p>
-          </div>
+          </div> */
+          }
         </div>
       </div>
     </>
