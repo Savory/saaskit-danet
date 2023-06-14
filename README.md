@@ -9,7 +9,7 @@ A [Deno SaaSKit](https://deno.com/saaskit) fork using
 
 ## Features
 
-- Freh's frontend with no
+- Freh's frontend with
   [No build step](https://deno.com/blog/you-dont-need-a-build-step#non-building-with-deno-and-fresh)
 - Deno's built-in [formatter](https://deno.land/manual/tools/formatter),
   [linter](https://deno.land/manual/tools/linter) and
@@ -17,15 +17,14 @@ A [Deno SaaSKit](https://deno.com/saaskit) fork using
 - Frontend and Business Logic uncoupling
 - Registration/Login with Oauth2 (google, discord), easily add your own provider
 - Registration/Login with email/password
-- DB and Subscription providers abstraction
+- Multiple DB providers, choose between KV, MongoDB or InMemory DB _simply by
+  modifying an environment variable_
 - Business Logic fully unit tested
-- API and Adapters tested via e2e tests
+- API and all DB Adapters tested via e2e tests
 - [Fresh](https://fresh.deno.dev/) as the web framework and
   [Tailwind CSS](https://tailwindcss.com/) as the CSS framework.
 
 ## To come
 
-- KV, MongoDB, Postgres Adapters. Simply chose one or the other via an
-  environment variable
 - CI/CD to deploy back+front on Deno Deploy
 - Subscription feature
