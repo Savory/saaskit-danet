@@ -14,6 +14,7 @@ A [Deno SaaSKit](https://deno.com/saaskit) fork using
 - Deno's built-in [formatter](https://deno.land/manual/tools/formatter),
   [linter](https://deno.land/manual/tools/linter) and
   [test runner](https://deno.land/manual/basics/testing) and TypeScript support.
+- Auto-generated OpenAPI documentation from code
 - Frontend and Business Logic uncoupling
 - Registration/Login with Oauth2 (google, discord), easily add your own provider
 - Registration/Login with email/password
