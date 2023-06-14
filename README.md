@@ -27,5 +27,7 @@ A [Deno SaaSKit](https://deno.com/saaskit) fork using
 
 ## To come
 
-- CI/CD to deploy back+front on Deno Deploy
-- Subscription feature
+- Subscription/Payment feature
+- CI/CD to deploy back+front on Deno Deploy (when deno_emit bug will be fixed,
+  [see issue](https://github.com/denoland/deno_emit/issues/122), or when deno
+  deploy handle emitDecoratorMetadata compiler options)
