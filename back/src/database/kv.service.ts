@@ -1,5 +1,5 @@
-import { Injectable } from "danet/mod.ts";
-import { OnAppBootstrap, OnAppClose } from "danet/src/hook/interfaces.ts";
+import { Injectable } from 'danet/mod.ts';
+import { OnAppBootstrap, OnAppClose } from 'danet/src/hook/interfaces.ts';
 
 @Injectable()
 export class KvService implements OnAppBootstrap, OnAppClose {

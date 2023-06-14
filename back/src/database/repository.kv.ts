@@ -10,7 +10,6 @@ export abstract class KvRepository<T extends { _id: string }>
   }
   async getAll(): Promise<T[]> {
     const items: T[] = [];
-    console.log("collections", this.collectionName);
     for await (
       const entry of this.kv.client().list<T>({ prefix: [this.collectionName] })
     ) {
@@ -66,8 +65,17 @@ export abstract class KvRepository<T extends { _id: string }>
       ...itemInDb,
       ...item,
     };
-    await this.kv.client().set([this.collectionName, itemId], itemToInsert);
-    return itemToInsert;
+    const secondaryKeys = this.getSecondaryKeys(item);
+    let transaction = this.kv.client().atomic()
+      .set([this.collectionName, item._id], itemToInsert);
+    for (const secondaryKey of Object.keys(secondaryKeys)) {
+      transaction = transaction.set(secondaryKeys[secondaryKey], itemToInsert);
+    }
+    const transactionResult = await transaction.commit();
+    if (!transactionResult.ok) {
+      throw new Error("Could create entity");
+    }
+    return item;
   }
 
   async deleteAll() {
@@ -77,7 +85,7 @@ export abstract class KvRepository<T extends { _id: string }>
     for await (const res of iter) this.kv.client().delete(res.key);
   }
 
-  protected getSecondaryKeys(item: T): any {
+  protected getSecondaryKeys(_item: T): Record<string, Deno.KvKey> {
     return {};
   }
 }

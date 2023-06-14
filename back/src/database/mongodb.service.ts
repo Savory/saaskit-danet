@@ -1,6 +1,6 @@
-import { Injectable } from "danet/mod.ts";
-import { OnAppBootstrap, OnAppClose } from "danet/src/hook/interfaces.ts";
-import { Collection, Database, Document, MongoClient } from "mongo/mod.ts";
+import { Injectable } from 'danet/mod.ts';
+import { OnAppBootstrap, OnAppClose } from 'danet/src/hook/interfaces.ts';
+import { Collection, Database, Document, MongoClient } from 'mongo/mod.ts';
 
 @Injectable()
 export class MongodbService implements OnAppBootstrap, OnAppClose {
@@ -13,14 +13,14 @@ export class MongodbService implements OnAppBootstrap, OnAppClose {
   }
 
   async onAppBootstrap() {
-    let connectionString = `mongodb://${Deno.env.get("DB_USERNAME")}:${
-      Deno.env.get("DB_PASSWORD")
-    }@${Deno.env.get("DB_HOST")}/${
-      Deno.env.get("DB_NAME")
+    let connectionString = `mongodb://${Deno.env.get('DB_USERNAME')}:${
+      Deno.env.get('DB_PASSWORD')
+    }@${Deno.env.get('DB_HOST')}/${
+      Deno.env.get('DB_NAME')
     }?authMechanism=SCRAM-SHA-1`;
-    if (!Deno.env.get("DB_USERNAME")) {
-      connectionString = `mongodb://${Deno.env.get("DB_HOST")}/${
-        Deno.env.get("DB_NAME")
+    if (!Deno.env.get('DB_USERNAME')) {
+      connectionString = `mongodb://${Deno.env.get('DB_HOST')}/${
+        Deno.env.get('DB_NAME')
       }?authMechanism=SCRAM-SHA-1`;
     }
     this.db = await this.client.connect(connectionString);

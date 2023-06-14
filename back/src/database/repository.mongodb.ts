@@ -1,6 +1,6 @@
-import { Repository } from "./repository.ts";
-import { Binary, Filter, ObjectId } from "mongo/mod.ts";
-import { MongodbService } from "../database/mongodb.service.ts";
+import { Repository } from './repository.ts';
+import { Filter, ObjectId } from 'mongo/mod.ts';
+import { MongodbService } from '../database/mongodb.service.ts';
 
 interface Document {
   _id: string | ObjectId;
@@ -54,7 +54,9 @@ export abstract class MongodbRepository<T extends Document>
     const _id = new ObjectId(objId);
     const updated = await this.dbService.getCollection<T>(this.collectionName)
       .updateOne(
+        // deno-lint-ignore no-explicit-any
         { _id } as any,
+        // deno-lint-ignore no-explicit-any
         { $set: { ...obj } } as any,
       );
     return updated;

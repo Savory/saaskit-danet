@@ -1,14 +1,14 @@
-import { Injectable } from "danet/mod.ts";
-import { Vote } from "./class.ts";
-import { type VoteRepository } from "./repository.ts";
-import { KvService } from "../../database/kv.service.ts";
-import { KvRepository } from "../../database/repository.kv.ts";
+import { Injectable } from 'danet/mod.ts';
+import { Vote } from './class.ts';
+import { type VoteRepository } from './repository.ts';
+import { KvService } from '../../database/kv.service.ts';
+import { KvRepository } from '../../database/repository.kv.ts';
 
 @Injectable()
 export class KvVoteRepository extends KvRepository<Vote>
   implements VoteRepository {
   constructor(protected kv: KvService) {
-    super(kv, "votes");
+    super(kv, 'votes');
   }
 
   async getByItemId(itemId: string): Promise<Vote[]> {

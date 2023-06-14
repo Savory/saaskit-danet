@@ -1,14 +1,14 @@
-import { Injectable } from "danet/mod.ts";
-import { Comment } from "./class.ts";
-import { CommentRepository } from "./repository.ts";
-import { KvService } from "../../database/kv.service.ts";
-import { KvRepository } from "../../database/repository.kv.ts";
+import { Injectable } from 'danet/mod.ts';
+import { Comment } from './class.ts';
+import { CommentRepository } from './repository.ts';
+import { KvService } from '../../database/kv.service.ts';
+import { KvRepository } from '../../database/repository.kv.ts';
 
 @Injectable()
 export class KvCommentRepository extends KvRepository<Comment>
   implements CommentRepository {
   constructor(protected kv: KvService) {
-    super(kv, "comments");
+    super(kv, 'comments');
   }
   async getByItemId(itemId: string): Promise<Comment[]> {
     const comments = [];

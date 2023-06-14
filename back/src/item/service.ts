@@ -3,14 +3,14 @@ import {
   Inject,
   Injectable,
   NotFoundException,
-} from "danet/mod.ts";
-import { CreateItemDTO, Item } from "./class.ts";
-import { Comment } from "./comment/class.ts";
-import type { Repository } from "../database/repository.ts";
-import { ITEM_REPOSITORY } from "./constant.ts";
-import { CommentService } from "./comment/service.ts";
-import { VoteService } from "./vote/service.ts";
-import { ActualUserService } from "../auth/actual-user.service.ts";
+} from 'danet/mod.ts';
+import { CreateItemDTO, Item } from './class.ts';
+import { Comment } from './comment/class.ts';
+import type { Repository } from '../database/repository.ts';
+import { ITEM_REPOSITORY } from './constant.ts';
+import { CommentService } from './comment/service.ts';
+import { VoteService } from './vote/service.ts';
+import { ActualUserService } from '../auth/actual-user.service.ts';
 
 @Injectable()
 export class ItemService {
@@ -23,7 +23,7 @@ export class ItemService {
   }
 
   async getAll() {
-    console.log("get all");
+    console.log('get all');
     const items = await this.repository.getAll();
     const promises = items.map(async (item: Item) => {
       const voteData = await this.getUpvoteCount(item._id);
@@ -70,7 +70,7 @@ export class ItemService {
 
   async addComment(
     itemId: string,
-    comment: Omit<Comment, "_id" | "createdAt">,
+    comment: Omit<Comment, '_id' | 'createdAt'>,
   ) {
     const item = await this.repository.getById(itemId);
     if (!item) throw new BadRequestException();
