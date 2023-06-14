@@ -31,3 +31,37 @@ A [Deno SaaSKit](https://deno.com/saaskit) fork using
 - CI/CD to deploy back+front on Deno Deploy (when deno_emit bug will be fixed,
   [see issue](https://github.com/denoland/deno_emit/issues/122), or when deno
   deploy handle emitDecoratorMetadata compiler options)
+
+## How to use
+
+### API
+
+Being built with Danet, we recommend that you use
+[our CLI](https://docs.danet.land/cli.html) to run it with filewatch using
+`danet develop` If you don't want to use your CLI, then simply run
+`deno task back:start` from root directory or `deno task start` from `back`
+directory.
+
+#### Pick your favorite DB
+
+This SAASKit handle InMemory, MongoDB and KV as database providers. Simply set
+`DB_PROVIDER=MEMORY` or `DB_PROVIDER=MONGO` or `DB_PROVIDER=KV` in your `.env`
+or environment. No code change required !
+
+MongoDB is the only provider that require a special setup, i.e, having a MongoDB
+database running either locally
+[(documentation here)](https://www.mongodb.com/docs/manual/installation/) or on
+a remote server/cloud provider, such as
+[MongoDB Atlas](https://www.mongodb.com/atlas/database?tck=docs_server) which
+has an awesome free tier.
+
+#### Learn how to use Danet framework
+
+We provide an extensive documentation that teaches everything needed to use
+Danet here : [https://docs.danet.land/](https://docs.danet.land/). It is
+available in English and French, with few pages translated to Portuguese.
+
+### FRONT / SSR
+
+Simply run `deno task front:start` from root directory or `deno task start` from
+`front` directory.
