@@ -73,7 +73,7 @@ export abstract class KvRepository<T extends { _id: string }>
     }
     const transactionResult = await transaction.commit();
     if (!transactionResult.ok) {
-      throw new Error("Could create entity");
+      throw new Error("Could update entity");
     }
     return item;
   }
