@@ -1,4 +1,4 @@
-import { bootstrap } from './src/bootstrap.ts';
+import { bootstrap } from "./src/bootstrap.ts";
 
 const application = await bootstrap();
-await application.listen(Number(Deno.env.get('PORT') || 3000));
+await application.listen(Number(Deno.env.get("PORT") || 3000));

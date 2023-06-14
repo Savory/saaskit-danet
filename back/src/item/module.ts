@@ -9,21 +9,29 @@ import { VoteService } from "./vote/service.ts";
 import { InMemoryItemRepository } from "./repository.memory.ts";
 import { InMemoryCommentRepository } from "./comment/repository.memory.ts";
 import { InMemoryVoteRepository } from "./vote/repository.memory.ts";
+import { MongodbItemRepository } from "./repository.mongodb.ts";
+import { MongodbVoteRepository } from "./vote/repository.mongodb.ts";
+import { MongodbCommentRepository } from "./comment/repository.mongodb.ts";
 
-// import { MongodbItemRepository } from "./repository.mongodb.ts";
-// import { MongodbVoteRepository } from "./vote/repository.mongodb.ts";
-// import { MongodbCommentRepository } from "./comment/repository.mongodb.ts";
+function getRepositoriesForProvider(provider: string | undefined) {
+  if (provider === "MONGO") {
+    return [
+      new TokenInjector(MongodbItemRepository, ITEM_REPOSITORY),
+      new TokenInjector(MongodbCommentRepository, COMMENT_REPOSITORY),
+      new TokenInjector(MongodbVoteRepository, VOTE_REPOSITORY),
+    ];
+  }
+  return [
+    new TokenInjector(InMemoryItemRepository, ITEM_REPOSITORY),
+    new TokenInjector(InMemoryCommentRepository, COMMENT_REPOSITORY),
+    new TokenInjector(InMemoryVoteRepository, VOTE_REPOSITORY),
+  ];
+}
 
 @Module({
   controllers: [ItemController],
   injectables: [
-    new TokenInjector(InMemoryItemRepository, ITEM_REPOSITORY),
-    new TokenInjector(InMemoryCommentRepository, COMMENT_REPOSITORY),
-    new TokenInjector(InMemoryVoteRepository, VOTE_REPOSITORY),
-
-    // new TokenInjector(MongodbItemRepository, ITEM_REPOSITORY),
-    // new TokenInjector(MongodbCommentRepository, COMMENT_REPOSITORY),
-    // new TokenInjector(MongodbVoteRepository, VOTE_REPOSITORY),
+    ...getRepositoriesForProvider(Deno.env.get("DB_PROVIDER")),
     ItemService,
     CommentService,
     VoteService,

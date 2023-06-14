@@ -1,6 +1,6 @@
+import "std/dotenv/load.ts";
 import { AppModule } from "./app.module.ts";
 import { DanetApplication } from "danet/mod.ts";
-import { loadSync } from "std/dotenv/mod.ts";
 import { loggerMiddleware } from "./logger.middleware.ts";
 import { SpecBuilder, SwaggerModule } from "danet_swagger/mod.ts";
 import { Session } from "session/mod.ts";
@@ -10,7 +10,6 @@ app.addGlobalMiddlewares(
   Session.initMiddleware(),
 );
 export const bootstrap = async () => {
-  await loadSync({ export: true, allowEmptyValues: true });
   const application = new DanetApplication();
   await application.init(AppModule);
   const spec = new SpecBuilder()

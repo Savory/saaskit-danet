@@ -170,7 +170,6 @@ describe("Item", () => {
         authorization: "Bearer " + token,
       },
     })).json();
-    console.log(item);
     assertEquals(item.score, 1);
     assertEquals(item.userHasVoted, true);
   });
