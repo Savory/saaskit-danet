@@ -24,7 +24,6 @@ export class ItemController {
   @UseGuard(UserMayBeConnected)
   @Get()
   async getAllItem() {
-    console.log('get all items');
     return this.itemService.getAll();
   }
 

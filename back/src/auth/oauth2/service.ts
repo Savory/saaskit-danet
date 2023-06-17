@@ -1,65 +1,42 @@
-import { Injectable } from 'danet/mod.ts';
-import { OAuth2Client } from 'oauth2_client/mod.ts';
-import { AuthService } from '../service.ts';
-import { Oauth2Provider } from '../class.ts';
+import { Injectable } from "danet/mod.ts";
+import { Discord, Google, Preset } from "authenticus/mod.ts";
+import { AuthService } from "../service.ts";
+import { Oauth2Provider } from "../class.ts";
 
 @Injectable()
 export class OAuth2Service {
-  private clients = new Map<string, OAuth2Client>();
+  private clients = new Map<string, Preset>();
 
   constructor(
     private authService: AuthService,
   ) {
     this.clients.set(
-      'google',
-      new OAuth2Client({
-        clientId: Deno.env.get('GOOGLE_CLIENT_ID')!,
-        clientSecret: Deno.env.get('GOOGLE_CLIENT_SECRET')!,
-        authorizationEndpointUri: 'https://accounts.google.com/o/oauth2/auth',
-        tokenUri: 'https://accounts.google.com/o/oauth2/token',
-        redirectUri: `${Deno.env.get('HOSTNAME')}/oauth2/callback`,
-        defaults: {
-          scope: [
-            'https://www.googleapis.com/auth/userinfo.email',
-            'https://www.googleapis.com/auth/userinfo.profile',
-          ],
-        },
-      }),
+      "google",
+      Google.setClientSecret(Deno.env.get("GOOGLE_CLIENT_SECRET")!).setClientId(
+        Deno.env.get("GOOGLE_CLIENT_ID")!,
+      ),
     );
     this.clients.set(
-      'discord',
-      new OAuth2Client({
-        clientId: Deno.env.get('DISCORD_CLIENT_ID')!,
-        clientSecret: Deno.env.get('DISCORD_CLIENT_SECRET')!,
-        authorizationEndpointUri: 'https://discord.com/oauth2/authorize',
-        tokenUri: 'https://discord.com/api/oauth2/token',
-        redirectUri: `${Deno.env.get('HOSTNAME')}/oauth2/callback`,
-        defaults: {
-          scope: [
-            'email',
-            'identify',
-          ],
-        },
-      }),
+      "discord",
+      Discord.setClientSecret(Deno.env.get("DISCORD_CLIENT_SECRET")!)
+        .setClientId(Deno.env.get("DISCORD_CLIENT_ID")!),
     );
   }
 
   async registerOrLoginUser(
-    url: string,
     codeVerifier: string,
-    provider: Oauth2Provider = 'google',
+    provider: Oauth2Provider = "google",
   ) {
     const tokens = await this.getTokens(
-      url,
       codeVerifier,
       provider,
     );
     const externalUserData = await this.getUser(
-      tokens.accessToken,
+      tokens.access_token,
       provider,
     );
     if (!externalUserData) {
-      throw new Error('Cannot get user info from provider' + provider);
+      throw new Error("Cannot get user info from provider" + provider);
     }
     return this.authService.registerOrLoginOAuth2(
       externalUserData.email,
@@ -69,20 +46,23 @@ export class OAuth2Service {
   }
 
   getAuthorizationUri(provider: string) {
-    return this.clients.get(provider)!.code
-      .getAuthorizationUri();
+    return this.clients.get(provider)!
+      .getAuthorizeUrl({
+        redirect_uri: `${Deno.env.get("HOSTNAME")}/oauth2/callback`,
+      });
   }
 
-  getTokens(url: string, codeVerifier: string, provider: string) {
-    return this.clients.get(provider)!.code.getToken(url, {
-      codeVerifier,
+  getTokens(codeVerifier: string, provider: string) {
+    return this.clients.get(provider)!.getAccessToken({
+      code: codeVerifier,
+      redirect_uri: `${Deno.env.get("HOSTNAME")}/oauth2/callback`,
     });
   }
 
   async getUser(accessToken: string, provider: string) {
-    if (provider === 'google') {
+    if (provider === "google") {
       const userResponse = await fetch(
-        'https://www.googleapis.com/oauth2/v3/userinfo',
+        "https://www.googleapis.com/oauth2/v3/userinfo",
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -91,9 +71,9 @@ export class OAuth2Service {
       );
       const user = await userResponse.json();
       return { email: user.email, username: user.name };
-    } else if (provider === 'discord') {
+    } else if (provider === "discord") {
       const userResponse = await fetch(
-        'https://discord.com/api/users/@me',
+        "https://discord.com/api/users/@me",
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
