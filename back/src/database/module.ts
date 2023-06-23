@@ -1,19 +1,17 @@
-import { InjectableConstructor, Module, TokenInjector } from 'danet/mod.ts';
-import { MongodbService } from './mongodb.service.ts';
-import { KvService } from './kv.service.ts';
-
-export const DATABASE = 'DATABASE';
+import { Module, Constructor } from 'danet/mod.ts';
+import { MongodbModule } from "danet-database/mongodb/module.ts";
+import { KvModule } from "danet-database/kv/module.ts";
 
 @Module({
-  imports: [],
-  injectables: ((): Array<InjectableConstructor | TokenInjector> => {
+  imports: ((): Array<Constructor> => {
     const provider = Deno.env.get('DB_PROVIDER');
     if (provider === 'MONGO') {
-      return [MongodbService];
+      return [MongodbModule];
     } else if (provider === 'KV') {
-      return [KvService];
+      return [KvModule];
     }
     return [];
   })(),
+  injectables: [],
 })
 export class DatabaseModule {}

@@ -1,4 +1,4 @@
-import { Repository } from '../../database/repository.ts';
+import { Repository } from 'danet-database/repository.ts';
 import { Vote } from './class.ts';
 
 export interface VoteRepository extends Repository<Vote> {

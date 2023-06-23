@@ -1,6 +1,6 @@
 import { Injectable } from 'danet/mod.ts';
-import { MongodbService } from '../database/mongodb.service.ts';
-import { MongodbRepository } from '../database/repository.mongodb.ts';
+import { MongodbService } from 'danet-database/mongodb/service.ts';
+import { MongodbRepository } from 'danet-database/mongodb/repository.ts';
 import { User } from './class.ts';
 import { UserRepository } from './repository.ts';
 

@@ -26,6 +26,7 @@
     "jwt/": "https://deno.land/x/djwt@v2.8/",
     "bcrypt/": "https://deno.land/x/bcrypt@v0.4.0/",
     "mongo/": "https://deno.land/x/mongo/",
-    "postgres/": "https://deno.land/x/postgres/"
+    "postgres/": "https://deno.land/x/postgres/",
+    "danet-database/": "https://deno.land/x/danet_database@0.0.1/"
   }
 }

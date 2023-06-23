@@ -1,4 +1,4 @@
-import { Repository } from '../database/repository.ts';
+import { Repository } from 'danet-database/repository.ts';
 import { User } from './class.ts';
 
 export const USER_REPOSITORY = 'USER_REPOSITORY';

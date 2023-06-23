@@ -6,7 +6,7 @@ import {
 } from 'danet/mod.ts';
 import { CreateItemDTO, Item } from './class.ts';
 import { Comment } from './comment/class.ts';
-import type { Repository } from '../database/repository.ts';
+import type { Repository } from 'danet-database/repository.ts';
 import { ITEM_REPOSITORY } from './constant.ts';
 import { CommentService } from './comment/service.ts';
 import { VoteService } from './vote/service.ts';

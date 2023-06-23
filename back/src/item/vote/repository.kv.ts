@@ -1,8 +1,8 @@
 import { Injectable } from 'danet/mod.ts';
 import { Vote } from './class.ts';
 import { type VoteRepository } from './repository.ts';
-import { KvService } from '../../database/kv.service.ts';
-import { KvRepository } from '../../database/repository.kv.ts';
+import { KvRepository } from "danet-database/kv/repository.ts";
+import { KvService } from "danet-database/kv/service.ts";
 
 @Injectable()
 export class KvVoteRepository extends KvRepository<Vote>
